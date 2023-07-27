@@ -1,0 +1,18 @@
+{
+  "scripts": {
+    "prepare": "husky install",
+    "start": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.1.0",
+    "hono": "^3.3.4"    
+  },
+  "devDependencies": {
+    "husky": "^8.0.3",
+    "tsc-files": "^1.1.4",
+    "tsx": "^3.12.2"
+  },
+  "lint-staged": {
+    "**/*.ts": "tsc-files --noEmit"
+  }
+}
