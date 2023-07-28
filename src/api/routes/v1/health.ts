@@ -1,8 +1,9 @@
 import { Hono } from 'hono'
+const HealthRoute = new Hono()
 
 /**
  * @openapi
- * /health:
+ * /v1/health:
  *   get:
  *     tags:
  *       - Health
@@ -13,9 +14,6 @@ import { Hono } from 'hono'
  *       '200':
  *         description: OK
  */
-
-const HealthRoute = new Hono()
-
 HealthRoute.get('/', (c) => c.text('test'))
 
 export default HealthRoute

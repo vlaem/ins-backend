@@ -7,14 +7,20 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.1.0",
-    "@types/swagger-jsdoc": "^6.0.1",
+    "etag": "^1.8.1",
     "hono": "^3.3.4",
+    "html-minifier": "^4.0.0",
+    "mustache": "^4.2.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-dist": "^5.2.0"
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.0",
+    "@types/etag": "^1.8.1",
+    "@types/html-minifier": "^4.0.2",
+    "@types/mustache": "^4.2.2",
     "@types/node": "^20.4.5",
+    "@types/swagger-jsdoc": "^6.0.1",
     "@typescript-eslint/eslint-plugin": "^6.2.0",
     "@typescript-eslint/parser": "^6.2.0",
     "eslint": "^8.45.0",
