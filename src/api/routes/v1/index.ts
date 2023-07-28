@@ -8,7 +8,7 @@ V1Route.route('/health', HealthRoute)
 
 V1Route.get('/swagger.json', (c) => {
   c.header('Content-Type', 'application/json')
-  return c.text(JSON.stringify(spec), 200)
+  return c.json(spec, 200)
 })
 
 export default V1Route

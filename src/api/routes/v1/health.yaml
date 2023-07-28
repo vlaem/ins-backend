@@ -1,0 +1,14 @@
+/v1/health:
+  get:
+    tags:
+      - Health
+    summary: Health check
+    description: Health check
+    operationId: health
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            example:
+              status: OK
