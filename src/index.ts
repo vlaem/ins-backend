@@ -1,8 +1,7 @@
 import { serve } from '@hono/node-server'
-import { Hono } from 'hono'
+import app from 'src/api/app'
 
-const app = new Hono()
-
-app.get('/', (c) => c.text('Hello Hono!'))
-
-serve(app)
+serve(app, (info) => {
+  // eslint-disable-next-line no-console
+  console.log(`Listening on http://localhost:${info.port}`)
+})
