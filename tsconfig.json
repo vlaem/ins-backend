@@ -6,7 +6,8 @@
     "baseUrl": ".",
     "paths": {
       "src": ["./src"],
-      "@logger": ["./src/shared/logging"]
+      "@config": ["./src/shared/config"],
+      "@logger": ["./src/shared/logging"]      
     },
     "types":[
       "node"      
