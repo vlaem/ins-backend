@@ -1,4 +1,4 @@
-name: Heroku Stage Deploy
+name: Main Merge
 on:
   push:
     branches:
