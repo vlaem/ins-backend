@@ -1,5 +1,6 @@
 import { serve } from '@hono/node-server'
 import app from 'src/api/app'
+import logger from '@logger'
 
 serve(
   {
@@ -7,7 +8,6 @@ serve(
     port: 3001,
   },
   (info) => {
-    // eslint-disable-next-line no-console
-    console.log(`Listening on http://localhost:${info.port}`)
+    logger.info(`Listening on http://localhost:${info.port}`)
   }
 )

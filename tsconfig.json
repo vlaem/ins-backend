@@ -1,13 +1,16 @@
 {
-  "extends": "@tsconfig/node18/tsconfig.json",
+  "extends": "@tsconfig/node18/tsconfig.json", 
+  
   "include": ["src/**/*.ts", "src/**/*.spec.ts"],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "src": ["./src"]
+      "src": ["./src"],
+      "@logger": ["./src/shared/logging"]
     },
     "types":[
       "node"      
-    ]
-  }
+    ],
+  },
+  
 }

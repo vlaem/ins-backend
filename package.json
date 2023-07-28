@@ -10,7 +10,9 @@
     "hono": "^3.3.4",
     "html-minifier": "^4.0.0",
     "mustache": "^4.2.0",
-    "swagger-jsdoc": "^6.2.8"
+    "safe-stable-stringify": "^2.4.3",
+    "swagger-jsdoc": "^6.2.8",
+    "winston": "^3.10.0"
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.0",
