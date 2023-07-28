@@ -7,7 +7,9 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.1.0",
+    "@types/swagger-jsdoc": "^6.0.1",
     "hono": "^3.3.4",
+    "swagger-jsdoc": "^6.2.8",
     "swagger-ui-dist": "^5.2.0"
   },
   "devDependencies": {
