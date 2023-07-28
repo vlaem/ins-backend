@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "lint": "eslint --ext .ts src",
     "lint-staged": "lint-staged",
     "test:unit": "jest --testMode=unit",
     "prepare": "husky install",

@@ -1,0 +1,14 @@
+name: Heroku Stage Deploy
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '*.md'
+      - '.gitignore'
+      - '.github/**'
+concurrency:
+  group: main-push
+jobs:
+  unit-tests:
+    uses: vlaem/ins-backend/.github/workflows/unit-tests.yml@main

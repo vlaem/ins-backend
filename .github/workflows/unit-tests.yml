@@ -17,5 +17,7 @@ jobs:
         cache: "yarn"
     - name: install packages
       run: yarn install
+    - name: run eslint
+      run: yarn lint  
     - name: run tests
       run: yarn test:unit
