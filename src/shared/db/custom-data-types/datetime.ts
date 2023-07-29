@@ -1,14 +1,14 @@
 import { DataTypes, ValidationErrorItem } from '@sequelize/core'
 import assert from 'assert'
-import luxon from 'luxon'
+import { DateTime as LuxonDateTime } from 'luxon'
 
-export class DateTime extends DataTypes.ABSTRACT<luxon.DateTime> {
+export class DateTime extends DataTypes.ABSTRACT<LuxonDateTime> {
   toSql() {
     return 'TIMESTAMP WITH TIME ZONE'
   }
 
   validate(value: unknown): void {
-    if (!(value instanceof luxon.DateTime)) {
+    if (!(value instanceof LuxonDateTime)) {
       ValidationErrorItem.throwDataTypeValidationError(
         'Value must be a luxon DateTime object'
       )
@@ -17,19 +17,19 @@ export class DateTime extends DataTypes.ABSTRACT<luxon.DateTime> {
 
   sanitize(value: unknown): unknown {
     if (value instanceof Date) {
-      return luxon.DateTime.fromJSDate(value)
+      return LuxonDateTime.fromJSDate(value)
     }
   }
 
-  parseDatabaseValue(value: unknown): luxon.DateTime {
+  parseDatabaseValue(value: unknown): LuxonDateTime {
     assert(
       typeof value === 'string',
       'Expected to receive a string from the database'
     )
-    return luxon.DateTime.fromISO(value as string)
+    return LuxonDateTime.fromISO(value as string)
   }
 
-  toBindableValue(value: luxon.DateTime): unknown {
+  toBindableValue(value: LuxonDateTime): unknown {
     return value.toISO()
   }
 }

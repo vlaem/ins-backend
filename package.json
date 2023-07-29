@@ -2,7 +2,7 @@
   "scripts": {
     "lint": "eslint --ext .ts src",
     "lint-staged": "lint-staged",
-    "test:unit": "jest --testMode=unit",
+    "test:unit": "jest",
     "prepare": "husky install",
     "dev": "tsx watch src/index.ts",
     "start": "tsx src/index.ts"

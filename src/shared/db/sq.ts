@@ -8,6 +8,7 @@ import {
 
 export const sequelize = new Sequelize(Config.Database.Url, {
   models: [UserModel, LinkInviteModel, UserRefreshTokenModel],
+  logging: true,
 })
 
 export const models = {

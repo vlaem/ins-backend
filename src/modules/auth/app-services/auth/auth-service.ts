@@ -5,7 +5,7 @@ import {
 import bycrypt from 'bcryptjs'
 import { DateTime } from 'luxon'
 import { encode } from 'src/shared/jwt'
-import { sequelize } from 'src/shared/db/index'
+import { sequelize } from '@db'
 import { UserRefreshToken } from 'src/modules/auth/domain/models'
 
 interface AuthTokenPayload {

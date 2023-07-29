@@ -6,6 +6,7 @@ import {
   InferAttributes,
   InferCreationAttributes,
   CreationOptional,
+  NonAttribute,
 } from '@sequelize/core'
 import {
   Attribute,
@@ -38,7 +39,12 @@ export class UserModel extends Model<
   declare updatedAt: CreationOptional<Date>
 }
 
-@Table({ schema: 'auth', underscored: true, tableName: 'user_refresh_tokens' })
+@Table({
+  schema: 'auth',
+  underscored: true,
+  tableName: 'user_refresh_tokens',
+  updatedAt: false,
+})
 export class UserRefreshTokenModel extends Model<
   InferAttributes<UserRefreshTokenModel>,
   InferCreationAttributes<UserRefreshTokenModel>
@@ -51,8 +57,8 @@ export class UserRefreshTokenModel extends Model<
   @NotNull
   declare userId: string
 
-  @BelongsTo(() => UserModel, 'id')
-  declare user: UserModel
+  @BelongsTo(() => UserModel, 'userId')
+  declare user: NonAttribute<UserModel>
 
   @Attribute(CustomDataTypes.DateTime)
   @NotNull
@@ -61,7 +67,12 @@ export class UserRefreshTokenModel extends Model<
   declare createdAt: CreationOptional<Date>
 }
 
-@Table({ schema: 'auth', underscored: true, tableName: 'link_invites' })
+@Table({
+  schema: 'auth',
+  underscored: true,
+  tableName: 'link_invites',
+  updatedAt: false,
+})
 export class LinkInviteModel extends Model<
   InferAttributes<LinkInviteModel>,
   InferCreationAttributes<LinkInviteModel>

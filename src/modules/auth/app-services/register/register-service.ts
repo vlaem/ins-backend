@@ -1,9 +1,10 @@
 import { User } from 'src/modules/auth/domain/models'
+import bycrypt from 'bcryptjs'
 import {
   linkInviteRepository,
   userRepository,
-  sequelize,
 } from 'src/modules/auth/infra/repositories'
+import { sequelize } from '@db'
 
 export const redeemLinkInvite = async (
   linkInviteCode: string,
@@ -24,7 +25,9 @@ export const redeemLinkInvite = async (
     throw new Error()
   }
 
-  const newUser = User.create(email, password)
+  const encryptedPassword = await bycrypt.hash(password, 13)
+
+  const newUser = User.create(email, encryptedPassword)
 
   await sequelize.transaction(async () => {
     await userRepository.add(newUser)

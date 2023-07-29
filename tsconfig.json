@@ -1,11 +1,13 @@
 {
   "extends": "@tsconfig/node18/tsconfig.json",
-  "include": ["src/**/*.ts", "src/**/*.spec.ts"],
+  "include": ["src/**/*.ts", "src/**/*.spec.ts", "tests/**/*.ts", "tests/**/*.spec.ts"],
   "compilerOptions": {
     "baseUrl": ".",
-    "paths": {
-      "src": ["./src/*"],
-      "@logger": ["./src/shared/logging"]
+    "paths": {      
+      "@logger": ["src/shared/logging"],
+      "@db": ["src/shared/db"],
+      "@dbmodels/*": ["src/shared/db/models/*"],
+      "src": ["src/*"]
     },
     "types": ["node", "jest"],
     "experimentalDecorators": true

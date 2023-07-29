@@ -23,15 +23,15 @@ export function up(queryInterface: AbstractQueryInterface) {
           type: DataTypes.STRING,
           allowNull: false,
         },
-        createdAt: DataTypes.DATE,
-        updatedAt: DataTypes.DATE,
+        created_at: DataTypes.DATE,
+        updated_at: DataTypes.DATE,
       },
       {}
     )
     await queryInterface.createTable(
       {
         schema: 'auth',
-        tableName: 'user-refresh-tokens',
+        tableName: 'user_refresh_tokens',
       },
       {
         id: {
@@ -46,26 +46,22 @@ export function up(queryInterface: AbstractQueryInterface) {
             key: 'id',
           },
         },
-        expiresAt: DataTypes.DATE,
-        createdAt: DataTypes.DATE,
+        expires_at: DataTypes.DATE,
+        created_at: DataTypes.DATE,
       }
     )
     await queryInterface.createTable(
       {
         schema: 'auth',
-        tableName: 'link-invites',
+        tableName: 'link_invites',
       },
       {
         id: {
           type: DataTypes.STRING,
           primaryKey: true,
         },
-        password: {
-          type: DataTypes.STRING,
-          allowNull: false,
-        },
-        expiresAt: DataTypes.DATE,
-        createdAt: DataTypes.DATE,
+        expires_at: DataTypes.DATE,
+        created_at: DataTypes.DATE,
       }
     )
   })

@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import { Op, FindOptions, InferAttributes } from '@sequelize/core'
 import { LinkInvite } from 'src/modules/auth/domain/models'
-import { LinkInviteModel } from 'src/shared/db/models/auth'
+import { LinkInviteModel } from '@dbmodels/auth'
 import { GenericRepository } from './generic-repository'
 
 class LinkInviteRepository

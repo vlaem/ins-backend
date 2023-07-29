@@ -1,10 +1,12 @@
+jest.mock('src/shared/db')
+
 import AuthRoute from './auth'
 import { AuthService } from 'src/modules/auth'
 
 jest.mock('src/modules/auth')
 const mockedAuthService = AuthService as jest.Mocked<typeof AuthService>
 
-describe('Auth', () => {
+describe('AuthRoute', () => {
   it('should return 200', async () => {
     mockedAuthService.passwordLogin.mockResolvedValue({
       token: 'token',
