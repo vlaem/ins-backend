@@ -1,6 +1,23 @@
+import { Duration } from 'luxon'
+
 export class Config {
   static get AppEnv(): string {
     return process.env.APP_ENV || 'localhost'
+  }
+
+  static JWT = class {
+    static get secret(): string {
+      return process.env.JWT_SECRET as string
+    }
+    static get duration(): Duration {
+      return Duration.fromObject({ minutes: 15 })
+    }
+  }
+
+  static Database = class {
+    static get Url() {
+      return process.env.DATABASE_URL as string
+    }
   }
 
   static Web = class {

@@ -1,16 +1,12 @@
-import { loadConfig, Config } from './shared/config'
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare function require(moduleName: string): any
+
+import { loadConfig } from './shared/config'
 loadConfig()
 
-import { serve } from '@hono/node-server'
-import app from 'src/api/app'
-import logger from '@logger'
+const { umzug } = require('./shared/db/umzug')
+const { serve } = require('./server')
 
-serve(
-  {
-    fetch: app.fetch,
-    port: Config.Web.Port,
-  },
-  (info) => {
-    logger.info(`Listening on http://localhost:${info.port}`)
-  }
-)
+umzug.up().then(() => {
+  serve()
+})

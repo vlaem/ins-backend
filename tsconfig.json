@@ -1,14 +1,13 @@
 {
   "extends": "@tsconfig/node18/tsconfig.json",
-
   "include": ["src/**/*.ts", "src/**/*.spec.ts"],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "src": ["./src"],
-      "@config": ["./src/shared/config"],
+      "src": ["./src/*"],
       "@logger": ["./src/shared/logging"]
     },
-    "types": ["node", "jest"]
+    "types": ["node", "jest"],
+    "experimentalDecorators": true
   }
 }
