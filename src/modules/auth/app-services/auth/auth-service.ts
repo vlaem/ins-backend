@@ -1,4 +1,5 @@
 import {
+  linkInviteRepository,
   userRepository,
   userRefreshTokenRepository,
 } from 'src/modules/auth/infra/repositories'
@@ -6,7 +7,8 @@ import bycrypt from 'bcryptjs'
 import { DateTime } from 'luxon'
 import { encode } from 'src/shared/jwt'
 import { sequelize } from '@db'
-import { UserRefreshToken } from 'src/modules/auth/domain/models'
+import { UserRefreshToken, User } from 'src/modules/auth/domain/models'
+import { InvalidOperationError, ResourceNotFoundError } from 'src/shared/errors'
 
 interface AuthTokenPayload {
   token: string
@@ -52,13 +54,13 @@ export async function passwordLogin(
   const user = await userRepository.findByEmail(email)
 
   if (!user) {
-    throw new Error()
+    throw new InvalidOperationError('INVALID_USEREMAIL_OR_PASSWORD')
   }
 
   const isValidPassword = await bycrypt.compare(password, user.password)
 
   if (!isValidPassword) {
-    throw new Error()
+    throw new InvalidOperationError('INVALID_USEREMAIL_OR_PASSWORD')
   }
 
   const tokenGroup = generateTokenAndRefresh({
@@ -85,13 +87,13 @@ export async function refresh(refreshToken: string): Promise<AuthTokenPayload> {
     await userRefreshTokenRepository.findOneNonExpiredById(refreshToken)
 
   if (!existingUserRefreshToken) {
-    throw new Error()
+    throw new InvalidOperationError('INVALID_REFRESH_TOKEN')
   }
 
   const user = await userRepository.findByPk(existingUserRefreshToken.userId)
 
   if (!user) {
-    throw new Error()
+    throw new InvalidOperationError('INVALID_REFRESH_TOKEN')
   }
 
   const newTokenGroup = generateTokenAndRefresh({
@@ -110,7 +112,48 @@ export async function refresh(refreshToken: string): Promise<AuthTokenPayload> {
   }
 }
 
+export async function redeemLinkInvite(
+  linkInviteCode: string,
+  email: string,
+  password: string
+) {
+  const invite = await linkInviteRepository.findOneNonExpiredById(
+    linkInviteCode
+  )
+
+  if (!invite) {
+    throw new ResourceNotFoundError('LINK_INVITE_NOT_FOUND')
+  }
+
+  const user = await userRepository.findByEmail(email)
+
+  if (user) {
+    throw new InvalidOperationError('EMAIL_ALREADY_IN_USE')
+  }
+
+  const encryptedPassword = await bycrypt.hash(password, 13)
+
+  const newUser = User.create(email, encryptedPassword)
+
+  const newTokenGroup = generateTokenAndRefresh({
+    id: newUser.id,
+    email: newUser.email,
+  })
+
+  await sequelize.transaction(async () => {
+    await userRepository.add(newUser)
+    await linkInviteRepository.destroy(invite)
+    await userRefreshTokenRepository.add(newTokenGroup.userRefreshToken)
+  })
+
+  return {
+    token: newTokenGroup.token,
+    refreshToken: newTokenGroup.userRefreshToken.id,
+  }
+}
+
 export default {
   passwordLogin,
   refresh,
+  redeemLinkInvite,
 }

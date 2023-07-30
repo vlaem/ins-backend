@@ -1,12 +1,10 @@
 jest.mock('src/shared/db')
 
 import InvitesRoute from './invites'
-import { RegisterService } from 'src/modules/auth'
+import { AuthService } from 'src/modules/auth'
 
 jest.mock('src/modules/auth')
-const mockedRegisterService = RegisterService as jest.Mocked<
-  typeof RegisterService
->
+const mockedAuthService = AuthService as jest.Mocked<typeof AuthService>
 
 describe('InvitesRoute', () => {
   describe('redeemInviteCodeEmailPassword', () => {
@@ -23,7 +21,7 @@ describe('InvitesRoute', () => {
       )
 
       expect(response.status).toBe(200)
-      expect(mockedRegisterService.redeemLinkInvite).toBeCalledWith(
+      expect(mockedAuthService.redeemLinkInvite).toBeCalledWith(
         'unique-code',
         'email@test.io',
         'unique-password'

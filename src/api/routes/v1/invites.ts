@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { z } from 'zod'
 import { zValidator } from '@hono/zod-validator'
-import { RegisterService } from 'src/modules/auth'
+import { AuthService } from 'src/modules/auth'
 
 const InvitesRoute = new Hono()
 
@@ -17,7 +17,7 @@ InvitesRoute.patch(
     const data = c.req.valid('json')
     const linkInviteCode = c.req.param('linkInviteCode')
 
-    await RegisterService.redeemLinkInvite(
+    await AuthService.redeemLinkInvite(
       linkInviteCode,
       data.email,
       data.password
