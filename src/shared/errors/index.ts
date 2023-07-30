@@ -4,6 +4,7 @@ export class ExtendedHTTPException extends HTTPException {
   code: string
   constructor(status: number, code: string, message?: string) {
     super(status)
+
     this.code = code
     this.message = message ?? code
   }

@@ -149,9 +149,3 @@ export async function redeemInvite(
     refreshToken: newTokenGroup.userRefreshToken.id,
   }
 }
-
-export default {
-  passwordLogin,
-  refresh,
-  redeemInvite,
-}

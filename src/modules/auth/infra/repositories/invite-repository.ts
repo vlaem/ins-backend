@@ -29,7 +29,6 @@ class InviteRepository implements GenericRepository<Invite, InviteModel> {
       },
     })
   }
-
   async add(refreshToken: Invite): Promise<void> {
     await InviteModel.create({
       id: refreshToken.id,

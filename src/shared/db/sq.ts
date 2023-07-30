@@ -4,7 +4,7 @@ import { UserModel, InviteModel, UserRefreshTokenModel } from './models/auth'
 
 export const sequelize = new Sequelize(Config.Database.Url, {
   models: [UserModel, InviteModel, UserRefreshTokenModel],
-  logging: true,
+  logging: false,
 })
 
 export const models = {
