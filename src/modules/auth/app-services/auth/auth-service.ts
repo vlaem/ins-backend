@@ -1,5 +1,5 @@
 import {
-  linkInviteRepository,
+  inviteRepository,
   userRepository,
   userRefreshTokenRepository,
 } from 'src/modules/auth/infra/repositories'
@@ -112,14 +112,12 @@ export async function refresh(refreshToken: string): Promise<AuthTokenPayload> {
   }
 }
 
-export async function redeemLinkInvite(
-  linkInviteCode: string,
+export async function redeemInvite(
+  inviteCode: string,
   email: string,
   password: string
 ) {
-  const invite = await linkInviteRepository.findOneNonExpiredById(
-    linkInviteCode
-  )
+  const invite = await inviteRepository.findOneNonExpiredById(inviteCode)
 
   if (!invite) {
     throw new ResourceNotFoundError('LINK_INVITE_NOT_FOUND')
@@ -142,7 +140,7 @@ export async function redeemLinkInvite(
 
   await sequelize.transaction(async () => {
     await userRepository.add(newUser)
-    await linkInviteRepository.destroy(invite)
+    await inviteRepository.destroy(invite)
     await userRefreshTokenRepository.add(newTokenGroup.userRefreshToken)
   })
 
@@ -155,5 +153,5 @@ export async function redeemLinkInvite(
 export default {
   passwordLogin,
   refresh,
-  redeemLinkInvite,
+  redeemInvite,
 }

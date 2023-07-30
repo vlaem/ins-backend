@@ -1,22 +1,22 @@
 import { DateTime } from 'luxon'
 import uidSafe from 'uid-safe'
 
-interface LinkInviteData {
+interface InviteData {
   id: string
   expiresAt: DateTime
 }
 
-export class LinkInvite {
+export class Invite {
   static create() {
-    const invite = new LinkInvite()
+    const invite = new Invite()
 
     invite._id = uidSafe.sync(32)
     invite._expiresAt = DateTime.now().plus({ days: 1 })
     return invite
   }
 
-  static load(data: LinkInviteData) {
-    const invite = new LinkInvite()
+  static load(data: InviteData) {
+    const invite = new Invite()
 
     invite._id = data.id
     invite._expiresAt = data.expiresAt

@@ -21,7 +21,7 @@ describe('InvitesRoute', () => {
       )
 
       expect(response.status).toBe(200)
-      expect(mockedAuthService.redeemLinkInvite).toBeCalledWith(
+      expect(mockedAuthService.redeemInvite).toBeCalledWith(
         'unique-code',
         'email@test.io',
         'unique-password'

@@ -73,9 +73,9 @@ export class UserRefreshTokenModel extends Model<
   tableName: 'link_invites',
   updatedAt: false,
 })
-export class LinkInviteModel extends Model<
-  InferAttributes<LinkInviteModel>,
-  InferCreationAttributes<LinkInviteModel>
+export class InviteModel extends Model<
+  InferAttributes<InviteModel>,
+  InferCreationAttributes<InviteModel>
 > {
   @Attribute(DataTypes.STRING)
   @PrimaryKey

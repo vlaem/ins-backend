@@ -11,17 +11,13 @@ const redeemEmailPasswordSchema = z.object({
 })
 
 InvitesRoute.patch(
-  '/:linkInviteCode/redeem-email-password',
+  '/:inviteCode/redeem-email-password',
   zValidator('json', redeemEmailPasswordSchema),
   async (c) => {
     const data = c.req.valid('json')
-    const linkInviteCode = c.req.param('linkInviteCode')
+    const inviteCode = c.req.param('inviteCode')
 
-    await AuthService.redeemLinkInvite(
-      linkInviteCode,
-      data.email,
-      data.password
-    )
+    await AuthService.redeemInvite(inviteCode, data.email, data.password)
 
     return c.json({}, 200)
   }
