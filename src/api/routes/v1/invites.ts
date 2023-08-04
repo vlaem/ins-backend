@@ -9,7 +9,7 @@ const InvitesRoute = new Hono()
 InvitesRoute.get('/:inviteCode', async (c) => {
   const inviteCode = c.req.param('inviteCode')
   const result = await InviteQueryService.getInvite(inviteCode)
-  return c.jsonT(result, 200)
+  return c.json(result, 200)
 })
 
 const redeemFirebase = z.object({
@@ -31,7 +31,7 @@ InvitesRoute.patch(
       httpOnly: true,
     })
 
-    return c.jsonT(
+    return c.json(
       {
         accessToken: payload.accessToken,
       },

@@ -1,7 +1,7 @@
 /v1/auth/login-with-firebase:
   post:
     tags:
-      - Auth
+      - Auth 
     summary: Login with Firebase
     description: Login with Firebase
     operationId: loginWithFirebase

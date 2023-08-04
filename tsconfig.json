@@ -5,7 +5,8 @@
     "src/**/*.spec.ts",
     "tests/**/*.ts",
     "tests/**/*.spec.ts",
-    "src/api/swagger/index.tsx"
+    "src/api/swagger/index.tsx",
+    "src/api/routes/v1/*.yaml"
   ],
   "compilerOptions": {
     "baseUrl": ".",
