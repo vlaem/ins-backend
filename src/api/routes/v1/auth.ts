@@ -22,7 +22,7 @@ AuthRoute.post(
       httpOnly: true,
     })
 
-    return c.json(
+    return c.jsonT(
       {
         accessToken: payload.accessToken,
       },
@@ -36,7 +36,7 @@ AuthRoute.post('/refresh', async (c) => {
 
   // If there is no refresh token, return 401
   if (!refreshToken) {
-    return c.json({ message: 'Unauthorized' }, 401)
+    return c.jsonT({ message: 'Unauthorized' }, 401)
   }
 
   const payload = await AuthService.refresh(refreshToken)
@@ -45,7 +45,7 @@ AuthRoute.post('/refresh', async (c) => {
     httpOnly: true,
   })
 
-  return c.json(
+  return c.jsonT(
     {
       accessToken: payload.accessToken,
     },
@@ -58,14 +58,14 @@ AuthRoute.post('/logout', async (c) => {
 
   // If there is no refresh token, return 401
   if (!refreshToken) {
-    return c.json({ message: 'Unauthorized' }, 401)
+    return c.jsonT({ message: 'Unauthorized' }, 401)
   }
 
   await AuthService.logout(refreshToken)
 
   deleteCookie(c, 'refresh_token')
 
-  return c.json({ message: 'Logout successful.' }, 200)
+  return c.jsonT({ message: 'Logout successful.' }, 200)
 })
 
 export default AuthRoute

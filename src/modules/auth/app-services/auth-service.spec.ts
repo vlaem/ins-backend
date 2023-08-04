@@ -136,14 +136,13 @@ describe('AuthService', () => {
     })
   })
   describe('logout', () => {
-    it('should throw an InvalidOperationError if the refresh token is not found', async () => {
+    it('should return early if the refresh token is not found', async () => {
       mockedUserRefreshTokenRepository.findOneNonExpiredById.mockResolvedValueOnce(
         null
       )
 
-      await expect(
-        AuthService.logout('unique-refresh-token')
-      ).rejects.toThrowError(new InvalidOperationError('INVALID_REFRESH_TOKEN'))
+      await AuthService.logout('unique-refresh-token')
+      expect(mockedUserRefreshTokenRepository.destroy).not.toHaveBeenCalled()
     })
     it('should destroy the refresh token', async () => {
       const refreshToken = new (mockedUserRefreshToken as any).constructor()

@@ -1,25 +1,61 @@
 import { Hono } from 'hono'
-import mustache from 'mustache'
-import fs from 'fs'
-import path from 'path'
 import { minify } from 'html-minifier'
-
-const relativePath = path.relative(process.cwd(), __dirname)
-const indexTemplate = fs.readFileSync(
-  path.join(relativePath, 'index.mustache'),
-  'utf8'
-)
-mustache.parse(indexTemplate)
+import { html, raw } from 'hono/html'
 
 interface Options {
   urls: { url: string; name: string }[]
 }
 
+interface PageProps {
+  version: string
+  urls: { url: string; name: string }[]
+}
+
+const generateSwaggerPage = (props: PageProps) =>
+  html`<!doctype html>
+    <html xmlns="http://www.w3.org/1999/xhtml">
+      <head>
+        <meta charset="UTF-8" />
+        <title>Swagger</title>
+        <link
+          rel="stylesheet"
+          type="text/css"
+          href="https://unpkg.com/normalize.css@7.0.0/normalize.css"
+        />
+        <link
+          rel="stylesheet"
+          type="text/css"
+          href="https://unpkg.com/swagger-ui-dist@${props.version}/swagger-ui.css"
+        />
+        <script src="https://unpkg.com/swagger-ui-dist@${props.version}/swagger-ui-standalone-preset.js"></script>
+        <script src="https://unpkg.com/swagger-ui-dist@${props.version}/swagger-ui-bundle.js"></script>
+        <script>
+          window.onload = function () {
+            const ui = SwaggerUIBundle({
+              urls: ${raw(JSON.stringify(props.urls))},
+              dom_id: '#swagger-ui',
+              deepLinking: true,
+              presets: [
+                SwaggerUIBundle.presets.apis,
+                SwaggerUIStandalonePreset,
+              ],
+              plugins: [SwaggerUIBundle.plugins.DownloadUrl],
+              layout: 'StandaloneLayout',
+            })
+            window.ui = ui
+          }
+        </script>
+      </head>
+      <body>
+        <div id="swagger-ui"></div>
+      </body>
+    </html>`
+
 const setupSwagger = (app: Hono, options: Options) => {
-  const apiDocsHtml = mustache.render(indexTemplate, {
-    urls: JSON.stringify(options.urls),
-    version: '5.2.0',
-  })
+  const version = '5.2.0'
+  const urls = options.urls
+
+  const apiDocsHtml = generateSwaggerPage({ version, urls })
 
   const minifiedApiDocsHtml = minify(apiDocsHtml, {
     collapseWhitespace: true,
@@ -28,8 +64,7 @@ const setupSwagger = (app: Hono, options: Options) => {
   })
 
   app.get('/api-docs', (c) => {
-    c.header('Content-Type', 'text/html')
-    return c.html(minifiedApiDocsHtml, 200)
+    return c.html(minifiedApiDocsHtml)
   })
 
   return app

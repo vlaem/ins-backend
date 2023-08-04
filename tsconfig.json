@@ -4,7 +4,8 @@
     "src/**/*.ts",
     "src/**/*.spec.ts",
     "tests/**/*.ts",
-    "tests/**/*.spec.ts"
+    "tests/**/*.spec.ts",
+    "src/api/swagger/index.tsx"
   ],
   "compilerOptions": {
     "baseUrl": ".",

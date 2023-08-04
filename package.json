@@ -1,4 +1,8 @@
 {
+  "name": "@vlaem/ins-backend",
+  "version": "1.0.0",
+  "description": "ins-backend",
+  "main": "src/api/index.ts",
   "scripts": {
     "lint": "eslint --ext .ts src",
     "lint-staged": "lint-staged",
