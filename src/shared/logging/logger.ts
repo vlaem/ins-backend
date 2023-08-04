@@ -33,42 +33,34 @@ class Logger {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public emerg(message: string, ...meta: any[]) {
     this.winstonLogger.emerg(message, ...meta)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public alert(message: string, ...meta: any[]) {
     this.winstonLogger.alert(message, ...meta)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public crit(message: string, ...meta: any[]) {
     this.winstonLogger.crit(message, ...meta)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public error(message: string, ...meta: any[]) {
     this.winstonLogger.error(message, ...meta)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public warning(message: string, ...meta: any[]) {
     this.winstonLogger.warning(message, ...meta)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public notice(message: string, ...meta: any[]) {
     this.winstonLogger.notice(message, ...meta)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public info(message: string, ...meta: any[]) {
     this.winstonLogger.info(message, ...meta)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public debug(message: string, ...meta: any[]) {
     this.winstonLogger.debug(message, ...meta)
   }
