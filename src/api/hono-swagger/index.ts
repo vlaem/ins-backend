@@ -1,8 +1,9 @@
-import { Hono } from 'hono'
+import { MiddlewareHandler } from 'hono'
 import { minify } from 'html-minifier'
 import { html, raw } from 'hono/html'
 
 interface Options {
+  route: string
   urls: { url: string; name: string }[]
 }
 
@@ -51,7 +52,7 @@ const generateSwaggerPage = (props: PageProps) =>
       </body>
     </html>`
 
-const setupSwagger = (app: Hono, options: Options) => {
+export function honoSwaggerUI(options: Options): MiddlewareHandler {
   const version = '5.2.0'
   const urls = options.urls
 
@@ -63,11 +64,7 @@ const setupSwagger = (app: Hono, options: Options) => {
     minifyJS: true,
   })
 
-  app.get('/api-docs', (c) => {
+  return async (c) => {
     return c.html(minifiedApiDocsHtml)
-  })
-
-  return app
+  }
 }
-
-export default setupSwagger
