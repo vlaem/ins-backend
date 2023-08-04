@@ -19,38 +19,6 @@
           application/json:
             example:
               status: OK
-/v1/invites/{inviteCode}/redeem-email-password:
-  patch:
-    tags:
-      - Invites
-    summary: Reddeem invite code with email and password
-    description: Reddeem invite code with email and password
-    operationId: redeemInviteCodeEmailPassword
-    parameters:
-      - name: inviteCode
-        in: path
-        description: Invite code
-        required: true
-        schema:
-          type: string
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              email:
-                type: string
-              password:
-                type: string
-    responses:
-      '200':
-        description: OK
-        content:
-          application/json:
-            example:
-              status: OK
 /v1/invites/{inviteCode}/redeem-firebase:
   patch:
     tags:

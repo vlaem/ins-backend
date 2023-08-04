@@ -37,6 +37,127 @@ jest.mock('src/shared/jwt')
 const mockedSequelize = sequelize as jest.Mocked<typeof sequelize>
 
 describe('AuthService', () => {
+  describe('firebaseLogin', () => {
+    it('should throw an InvalidOperationError if the email is not found', async () => {
+      mockedFirebaseAdmin.decodeToken.mockResolvedValueOnce({
+        uid: 'unique-firebase-token',
+        email: 'email@test.io',
+      })
+      mockedUserRepository.findByEmail.mockResolvedValueOnce(null)
+
+      await expect(
+        AuthService.firebaseLogin('unique-firebase-token')
+      ).rejects.toThrowError(new InvalidOperationError('USER_NOT_FOUND'))
+    })
+    it('should return a token and a refresh token', async () => {
+      mockedFirebaseAdmin.decodeToken.mockResolvedValueOnce({
+        uid: 'unique-firebase-token',
+        email: 'email@test.io',
+      })
+
+      const user = new (mockedUser as any).constructor()
+      mockedUserRepository.findByEmail.mockResolvedValueOnce(user)
+
+      mockedJWT.encode.mockReturnValueOnce('unique-access-token')
+
+      const newUserRefreshToken = new (
+        mockedUserRefreshToken as any
+      ).constructor()
+      newUserRefreshToken.id = 'unique-refresh-token-id'
+      mockedUserRefreshToken.create.mockReturnValueOnce(newUserRefreshToken)
+
+      const result = await AuthService.firebaseLogin('unique-firebase-token')
+
+      expect(mockedUserRefreshTokenRepository.add).toHaveBeenCalledWith(
+        newUserRefreshToken
+      )
+
+      expect(result).toEqual({
+        accessToken: 'unique-access-token',
+        refreshToken: 'unique-refresh-token-id',
+      })
+    })
+  })
+  describe('refresh', () => {
+    it('should throw an InvalidOperationError if the refresh token is not found', async () => {
+      mockedUserRefreshTokenRepository.findOneNonExpiredById.mockResolvedValueOnce(
+        null
+      )
+
+      await expect(
+        AuthService.refresh('unique-refresh-token')
+      ).rejects.toThrowError(new InvalidOperationError('INVALID_REFRESH_TOKEN'))
+    })
+    it('should throw an InvalidOperationError if the user is not found', async () => {
+      const refreshToken = new (mockedUserRefreshToken as any).constructor()
+      mockedUserRefreshTokenRepository.findOneNonExpiredById.mockResolvedValueOnce(
+        refreshToken
+      )
+
+      mockedUserRepository.findByPk.mockResolvedValueOnce(null)
+
+      await expect(
+        AuthService.refresh('unique-refresh-token')
+      ).rejects.toThrowError(new InvalidOperationError('INVALID_REFRESH_TOKEN'))
+    })
+    it('should return a token and a refresh token', async () => {
+      const refreshToken = new (mockedUserRefreshToken as any).constructor()
+      mockedUserRefreshTokenRepository.findOneNonExpiredById.mockResolvedValueOnce(
+        refreshToken
+      )
+
+      const user = new (mockedUser as any).constructor()
+      mockedUserRepository.findByPk.mockResolvedValueOnce(user)
+
+      mockedJWT.encode.mockReturnValueOnce('unique-access-token')
+
+      const newUserRefreshToken = new (
+        mockedUserRefreshToken as any
+      ).constructor()
+      newUserRefreshToken.id = 'unique-refresh-token-id'
+      mockedUserRefreshToken.create.mockReturnValueOnce(newUserRefreshToken)
+
+      mockedSequelize.transaction.mockImplementation((callback: any) =>
+        callback()
+      )
+
+      const result = await AuthService.refresh('unique-refresh-token')
+
+      expect(mockedUserRefreshTokenRepository.add).toHaveBeenCalledWith(
+        newUserRefreshToken
+      )
+      expect(mockedUserRefreshTokenRepository.destroy).toHaveBeenCalledWith(
+        refreshToken
+      )
+      expect(result).toEqual({
+        accessToken: 'unique-access-token',
+        refreshToken: 'unique-refresh-token-id',
+      })
+    })
+  })
+  describe('logout', () => {
+    it('should throw an InvalidOperationError if the refresh token is not found', async () => {
+      mockedUserRefreshTokenRepository.findOneNonExpiredById.mockResolvedValueOnce(
+        null
+      )
+
+      await expect(
+        AuthService.logout('unique-refresh-token')
+      ).rejects.toThrowError(new InvalidOperationError('INVALID_REFRESH_TOKEN'))
+    })
+    it('should destroy the refresh token', async () => {
+      const refreshToken = new (mockedUserRefreshToken as any).constructor()
+      mockedUserRefreshTokenRepository.findOneNonExpiredById.mockResolvedValueOnce(
+        refreshToken
+      )
+
+      await AuthService.logout('unique-refresh-token')
+
+      expect(mockedUserRefreshTokenRepository.destroy).toHaveBeenCalledWith(
+        refreshToken
+      )
+    })
+  })
   describe('redeemInvitaWithFirebaseToken', () => {
     it('should throw an InvalidOperationError if the invite code is not found or expired', async () => {
       mockedInviteRepository.findOneNonExpiredById.mockResolvedValueOnce(null)

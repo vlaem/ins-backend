@@ -42,6 +42,30 @@ function generateTokenAndRefresh(userData: UserData): UserTokenGroup {
   }
 }
 
+export async function firebaseLogin(
+  firebaseToken: string
+): Promise<AuthTokenPayload> {
+  const decodedToken = await FirebaseAdmin.decodeToken(firebaseToken)
+
+  const user = await UserRepository.findByEmail(decodedToken.email)
+
+  if (!user) {
+    throw new ResourceNotFoundError('USER_NOT_FOUND')
+  }
+
+  const tokenGroup = generateTokenAndRefresh({
+    id: user.id,
+    email: user.email,
+  })
+
+  await UserRefreshTokenRepository.add(tokenGroup.userRefreshToken)
+
+  return {
+    accessToken: tokenGroup.accessToken,
+    refreshToken: tokenGroup.userRefreshToken.id,
+  }
+}
+
 /**
  * Authenticate user with email and password, returning a token and a refresh token.
  * @param email - user email
@@ -111,6 +135,17 @@ export async function refresh(refreshToken: string): Promise<AuthTokenPayload> {
     accessToken: newTokenGroup.accessToken,
     refreshToken: newTokenGroup.userRefreshToken.id,
   }
+}
+
+export async function logout(refreshToken: string): Promise<void> {
+  const existingUserRefreshToken =
+    await UserRefreshTokenRepository.findOneNonExpiredById(refreshToken)
+
+  if (!existingUserRefreshToken) {
+    throw new InvalidOperationError('INVALID_REFRESH_TOKEN')
+  }
+
+  await UserRefreshTokenRepository.destroy(existingUserRefreshToken)
 }
 
 export async function redeemInviteWithEmailAndPassword(

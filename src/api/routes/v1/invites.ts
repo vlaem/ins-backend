@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { z } from 'zod'
 import { zValidator } from '@hono/zod-validator'
 import { AuthService, InviteQueryService } from 'src/modules/auth'
+import { setCookie } from 'hono/cookie'
 
 const InvitesRoute = new Hono()
 
@@ -10,26 +11,6 @@ InvitesRoute.get('/:inviteCode', async (c) => {
   const result = await InviteQueryService.getInvite(inviteCode)
   return c.json(result, 200)
 })
-
-const redeemEmailPasswordSchema = z.object({
-  email: z.string().email().trim(),
-  password: z.string().trim(),
-})
-
-InvitesRoute.patch(
-  '/:inviteCode/redeem-email-password',
-  zValidator('json', redeemEmailPasswordSchema),
-  async (c) => {
-    const data = c.req.valid('json')
-    const inviteCode = c.req.param('inviteCode')
-    await AuthService.redeemInviteWithEmailAndPassword(
-      inviteCode,
-      data.email,
-      data.password
-    )
-    return c.json({}, 200)
-  }
-)
 
 const redeemFirebase = z.object({
   firebaseToken: z.string().trim().nonempty(),
@@ -45,11 +26,10 @@ InvitesRoute.patch(
       inviteCode,
       data.firebaseToken
     )
-    // Put the payload.refreshToken into a httpOnly cookie
-    c.header(
-      'Set-Cookie',
-      `refreshToken=${payload.refreshToken}; HttpOnly; Path=/;`
-    )
+
+    setCookie(c, 'refresh_token', payload.refreshToken, {
+      httpOnly: true,
+    })
 
     return c.json(
       {
