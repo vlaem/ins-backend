@@ -3,7 +3,7 @@ import { User } from 'src/modules/auth/domain/models'
 import { FindOptions, InferAttributes } from '@sequelize/core'
 import { GenericRepository } from './generic-repository'
 
-class UserRepository implements GenericRepository<User, UserModel> {
+export class UserRepository implements GenericRepository<User, UserModel> {
   async findOne(
     options?:
       | FindOptions<InferAttributes<UserModel, { omit: never }>>
@@ -50,5 +50,3 @@ class UserRepository implements GenericRepository<User, UserModel> {
     return this.findOne({ where: { id } })
   }
 }
-
-export const userRepository = new UserRepository()

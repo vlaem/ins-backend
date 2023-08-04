@@ -38,7 +38,7 @@ export function up(queryInterface: AbstractQueryInterface) {
           type: DataTypes.STRING,
           primaryKey: true,
         },
-        userId: {
+        user_id: {
           type: DataTypes.UUID,
           allowNull: false,
           references: {

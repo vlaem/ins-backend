@@ -4,7 +4,9 @@ import { Invite } from 'src/modules/auth/domain/models'
 import { InviteModel } from '@dbmodels/auth'
 import { GenericRepository } from './generic-repository'
 
-class InviteRepository implements GenericRepository<Invite, InviteModel> {
+export class InviteRepository
+  implements GenericRepository<Invite, InviteModel>
+{
   async findOne(
     options?:
       | FindOptions<InferAttributes<InviteModel, { omit: never }>>
@@ -55,5 +57,3 @@ class InviteRepository implements GenericRepository<Invite, InviteModel> {
     await InviteModel.destroy({ where: { id: refreshToken.id } })
   }
 }
-
-export const inviteRepository = new InviteRepository()

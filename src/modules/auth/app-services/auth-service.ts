@@ -1,17 +1,18 @@
 import {
-  inviteRepository,
-  userRepository,
-  userRefreshTokenRepository,
+  InviteRepository,
+  UserRepository,
+  UserRefreshTokenRepository,
 } from 'src/modules/auth/infra/repositories'
 import bycrypt from 'bcryptjs'
 import { DateTime } from 'luxon'
 import { encode } from 'src/shared/jwt'
 import { sequelize } from '@db'
 import { UserRefreshToken, User } from 'src/modules/auth/domain/models'
-import { InvalidOperationError, ResourceNotFoundError } from 'src/shared/errors'
+import { InvalidOperationError, ResourceNotFoundError } from '#errors'
+import { FirebaseAdmin } from 'src/modules/auth/infra/firebase'
 
 interface AuthTokenPayload {
-  token: string
+  accessToken: string
   refreshToken: string
 }
 interface UserData {
@@ -19,7 +20,7 @@ interface UserData {
   email: string
 }
 interface UserTokenGroup {
-  token: string
+  accessToken: string
   userRefreshToken: UserRefreshToken
 }
 
@@ -28,15 +29,15 @@ interface UserTokenGroup {
  * @param userData - user data
  * @returns {UserTokenGroup}
  */
-export function generateTokenAndRefresh(userData: UserData): UserTokenGroup {
-  const token = encode(userData)
+function generateTokenAndRefresh(userData: UserData): UserTokenGroup {
+  const accessToken = encode(userData)
   const userRefreshToken = UserRefreshToken.create(
     userData.id,
     DateTime.now().plus({ days: 30 })
   )
 
   return {
-    token,
+    accessToken,
     userRefreshToken,
   }
 }
@@ -51,7 +52,7 @@ export async function passwordLogin(
   email: string,
   password: string
 ): Promise<AuthTokenPayload> {
-  const user = await userRepository.findByEmail(email)
+  const user = await UserRepository.findByEmail(email)
 
   if (!user) {
     throw new InvalidOperationError('INVALID_USEREMAIL_OR_PASSWORD')
@@ -68,10 +69,10 @@ export async function passwordLogin(
     email: user.email,
   })
 
-  await userRefreshTokenRepository.update(tokenGroup.userRefreshToken)
+  await UserRefreshTokenRepository.update(tokenGroup.userRefreshToken)
 
   return {
-    token: tokenGroup.token,
+    accessToken: tokenGroup.accessToken,
     refreshToken: tokenGroup.userRefreshToken.id,
   }
 }
@@ -84,13 +85,13 @@ export async function passwordLogin(
  */
 export async function refresh(refreshToken: string): Promise<AuthTokenPayload> {
   const existingUserRefreshToken =
-    await userRefreshTokenRepository.findOneNonExpiredById(refreshToken)
+    await UserRefreshTokenRepository.findOneNonExpiredById(refreshToken)
 
   if (!existingUserRefreshToken) {
     throw new InvalidOperationError('INVALID_REFRESH_TOKEN')
   }
 
-  const user = await userRepository.findByPk(existingUserRefreshToken.userId)
+  const user = await UserRepository.findByPk(existingUserRefreshToken.userId)
 
   if (!user) {
     throw new InvalidOperationError('INVALID_REFRESH_TOKEN')
@@ -102,28 +103,28 @@ export async function refresh(refreshToken: string): Promise<AuthTokenPayload> {
   })
 
   await sequelize.transaction(async () => {
-    await userRefreshTokenRepository.destroy(existingUserRefreshToken)
-    await userRefreshTokenRepository.add(newTokenGroup.userRefreshToken)
+    await UserRefreshTokenRepository.destroy(existingUserRefreshToken)
+    await UserRefreshTokenRepository.add(newTokenGroup.userRefreshToken)
   })
 
   return {
-    token: newTokenGroup.token,
+    accessToken: newTokenGroup.accessToken,
     refreshToken: newTokenGroup.userRefreshToken.id,
   }
 }
 
-export async function redeemInvite(
+export async function redeemInviteWithEmailAndPassword(
   inviteCode: string,
   email: string,
   password: string
-) {
-  const invite = await inviteRepository.findOneNonExpiredById(inviteCode)
+): Promise<AuthTokenPayload> {
+  const invite = await InviteRepository.findOneNonExpiredById(inviteCode)
 
   if (!invite) {
     throw new ResourceNotFoundError('LINK_INVITE_NOT_FOUND')
   }
 
-  const user = await userRepository.findByEmail(email)
+  const user = await UserRepository.findByEmail(email)
 
   if (user) {
     throw new InvalidOperationError('EMAIL_ALREADY_IN_USE')
@@ -131,7 +132,7 @@ export async function redeemInvite(
 
   const encryptedPassword = await bycrypt.hash(password, 13)
 
-  const newUser = User.create(email, encryptedPassword)
+  const newUser = User.createWithEmailAndPassword(email, encryptedPassword)
 
   const newTokenGroup = generateTokenAndRefresh({
     id: newUser.id,
@@ -139,13 +140,53 @@ export async function redeemInvite(
   })
 
   await sequelize.transaction(async () => {
-    await userRepository.add(newUser)
-    await inviteRepository.destroy(invite)
-    await userRefreshTokenRepository.add(newTokenGroup.userRefreshToken)
+    await UserRepository.add(newUser)
+    await InviteRepository.destroy(invite)
+    await UserRefreshTokenRepository.add(newTokenGroup.userRefreshToken)
   })
 
   return {
-    token: newTokenGroup.token,
+    accessToken: newTokenGroup.accessToken,
+    refreshToken: newTokenGroup.userRefreshToken.id,
+  }
+}
+
+export async function redeemInvitaWithFirebaseToken(
+  inviteCode: string,
+  firebaseToken: string
+): Promise<AuthTokenPayload> {
+  const invite = await InviteRepository.findOneNonExpiredById(inviteCode)
+
+  if (!invite) {
+    throw new ResourceNotFoundError('LINK_INVITE_NOT_FOUND')
+  }
+
+  const decodedToken = await FirebaseAdmin.decodeToken(firebaseToken)
+
+  const user = await UserRepository.findByEmail(decodedToken.email)
+
+  if (user) {
+    throw new InvalidOperationError('EMAIL_ALREADY_IN_USE')
+  }
+
+  const newUser = User.createWithFirebaseUid(
+    decodedToken.email,
+    decodedToken.uid
+  )
+
+  const newTokenGroup = generateTokenAndRefresh({
+    id: newUser.id,
+    email: newUser.email,
+  })
+
+  await sequelize.transaction(async () => {
+    await UserRepository.add(newUser)
+    await InviteRepository.destroy(invite)
+    await UserRefreshTokenRepository.add(newTokenGroup.userRefreshToken)
+  })
+
+  return {
+    accessToken: newTokenGroup.accessToken,
     refreshToken: newTokenGroup.userRefreshToken.id,
   }
 }

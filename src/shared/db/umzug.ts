@@ -1,7 +1,7 @@
 import { sequelize } from './sq'
 import { DataTypes } from '@sequelize/core'
 import { Umzug, SequelizeStorage } from 'umzug'
-import logger from '@logger'
+import logger from '#logger'
 
 export const umzug = new Umzug({
   migrations: {

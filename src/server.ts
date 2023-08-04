@@ -1,7 +1,7 @@
 import { Config } from './shared/config'
 import { serve as honoNodeServe } from '@hono/node-server'
 import app from 'src/api/app'
-import logger from '@logger'
+import logger from '#logger'
 
 export function serve(): void {
   honoNodeServe(

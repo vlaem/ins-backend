@@ -1,4 +1,8 @@
-import { DataTypes, ValidationErrorItem } from '@sequelize/core'
+import {
+  DataTypes,
+  ValidationErrorItem,
+  BindParamOptions,
+} from '@sequelize/core'
 import assert from 'assert'
 import { DateTime as LuxonDateTime } from 'luxon'
 
@@ -16,8 +20,16 @@ export class DateTime extends DataTypes.ABSTRACT<LuxonDateTime> {
   }
 
   sanitize(value: unknown): unknown {
+    if (value instanceof LuxonDateTime) {
+      return value
+    }
+
     if (value instanceof Date) {
       return LuxonDateTime.fromJSDate(value)
+    }
+
+    if (typeof value === 'string') {
+      return LuxonDateTime.fromISO(value)
     }
   }
 
@@ -31,5 +43,9 @@ export class DateTime extends DataTypes.ABSTRACT<LuxonDateTime> {
 
   toBindableValue(value: LuxonDateTime): unknown {
     return value.toISO()
+  }
+
+  getBindParamSql(value: LuxonDateTime, options: BindParamOptions): string {
+    return options.bindParam(value.toISO())
   }
 }

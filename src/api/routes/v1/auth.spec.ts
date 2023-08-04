@@ -9,7 +9,7 @@ const mockedAuthService = AuthService as jest.Mocked<typeof AuthService>
 describe('AuthRoute', () => {
   it('should return 200', async () => {
     mockedAuthService.passwordLogin.mockResolvedValue({
-      token: 'token',
+      accessToken: 'token',
       refreshToken: 'refreshToken',
     })
 

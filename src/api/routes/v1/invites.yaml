@@ -33,17 +33,17 @@
         required: true
         schema:
           type: string
-    requestBody:                
+    requestBody:
       required: true
       content:
         application/json:
-          schema:            
+          schema:
             type: object
             properties:
               email:
                 type: string
               password:
-                type: string      
+                type: string
     responses:
       '200':
         description: OK
@@ -51,3 +51,37 @@
           application/json:
             example:
               status: OK
+/v1/invites/{inviteCode}/redeem-firebase:
+  patch:
+    tags:
+      - Invites
+    summary: Reddeem invite code with firebase token
+    description: Reddeem invite code with firebase token
+    operationId: redeemInviteCodeFirebase
+    parameters:
+      - name: inviteCode
+        in: path
+        description: Invite code
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              firebaseToken:
+                type: string
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accessToken:
+                  type: string
+                  description: Access token

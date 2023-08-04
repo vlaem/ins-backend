@@ -1,13 +1,13 @@
 import { v4 as uuidv4 } from 'uuid'
 
-interface UserData {
+interface UserModelData {
   id: string
   email: string
   password: string
 }
 
 export class User {
-  static create(email: string, password: string): User {
+  static createWithEmailAndPassword(email: string, password: string): User {
     const user = new User()
 
     user._id = uuidv4()
@@ -17,12 +17,22 @@ export class User {
     return user
   }
 
+  static createWithFirebaseUid(email: string, firebaseUid: string): User {
+    const user = new User()
+
+    user._id = uuidv4()
+    user._email = email
+    user._firebaseUid = firebaseUid
+
+    return user
+  }
+
   /**
    * This method should only be used by the repository to load data from the database.
    * @param data: IUser
    * @returns {User}
    */
-  static load(data: UserData): User {
+  static load(data: UserModelData): User {
     const user = new User()
 
     user._id = data.id
@@ -47,5 +57,10 @@ export class User {
   private _password: string = ''
   get password(): string {
     return this._password
+  }
+
+  private _firebaseUid: string = ''
+  get firebaseUid(): string {
+    return this._firebaseUid
   }
 }

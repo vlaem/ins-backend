@@ -36,4 +36,22 @@ export class Config {
       }
     }
   }
+
+  static Firebase = class {
+    static get ProjectId(): string {
+      return process.env.FIREBASE_PROJECT_ID as string
+    }
+    static get ClientEmail(): string {
+      return process.env.FIREBASE_CLIENT_EMAIL as string
+    }
+    static get PrivateKey(): string {
+      return process.env.FIREBASE_PRIVATE_KEY as string
+    }
+    static get ApiKey(): string {
+      return process.env.FIREBASE_API_KEY as string
+    }
+    static get AuthDomain(): string {
+      return process.env.FIREBASE_AUTH_DOMAIN as string
+    }
+  }
 }

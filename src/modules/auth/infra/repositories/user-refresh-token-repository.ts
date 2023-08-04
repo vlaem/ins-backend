@@ -4,7 +4,7 @@ import { UserRefreshToken } from 'src/modules/auth/domain/models'
 import { UserRefreshTokenModel } from '@dbmodels/auth'
 import { GenericRepository } from './generic-repository'
 
-class UserRefreshTokenRepository
+export class UserRefreshTokenRepository
   implements GenericRepository<UserRefreshToken, UserRefreshTokenModel>
 {
   async findOne(
@@ -60,5 +60,3 @@ class UserRefreshTokenRepository
     })
   }
 }
-
-export const userRefreshTokenRepository = new UserRefreshTokenRepository()

@@ -1,5 +1,5 @@
 import { MiddlewareHandler } from 'hono'
-import logger from '@logger'
+import logger from '#logger'
 
 export function metrics(): MiddlewareHandler {
   return async (c, next) => {

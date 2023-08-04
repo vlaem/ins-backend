@@ -22,8 +22,41 @@ InvitesRoute.patch(
   async (c) => {
     const data = c.req.valid('json')
     const inviteCode = c.req.param('inviteCode')
-    await AuthService.redeemInvite(inviteCode, data.email, data.password)
+    await AuthService.redeemInviteWithEmailAndPassword(
+      inviteCode,
+      data.email,
+      data.password
+    )
     return c.json({}, 200)
+  }
+)
+
+const redeemFirebase = z.object({
+  firebaseToken: z.string().trim().nonempty(),
+})
+
+InvitesRoute.patch(
+  '/:inviteCode/redeem-firebase',
+  zValidator('json', redeemFirebase),
+  async (c) => {
+    const data = c.req.valid('json')
+    const inviteCode = c.req.param('inviteCode')
+    const payload = await AuthService.redeemInvitaWithFirebaseToken(
+      inviteCode,
+      data.firebaseToken
+    )
+    // Put the payload.refreshToken into a httpOnly cookie
+    c.header(
+      'Set-Cookie',
+      `refreshToken=${payload.refreshToken}; HttpOnly; Path=/;`
+    )
+
+    return c.json(
+      {
+        accessToken: payload.accessToken,
+      },
+      200
+    )
   }
 )
 

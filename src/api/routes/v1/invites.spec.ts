@@ -1,5 +1,3 @@
-jest.mock('src/shared/db')
-
 import InvitesRoute from './invites'
 import { AuthService } from 'src/modules/auth'
 
@@ -21,10 +19,37 @@ describe('InvitesRoute', () => {
       )
 
       expect(response.status).toBe(200)
-      expect(mockedAuthService.redeemInvite).toBeCalledWith(
+      expect(mockedAuthService.redeemInviteWithEmailAndPassword).toBeCalledWith(
         'unique-code',
         'email@test.io',
         'unique-password'
+      )
+    })
+  })
+  describe('redeemInviteCodeFirebase', () => {
+    it('should return 200', async () => {
+      mockedAuthService.redeemInvitaWithFirebaseToken.mockResolvedValueOnce({
+        accessToken: 'unique-access-token',
+        refreshToken: 'unique-refresh-token',
+      })
+
+      const response = await InvitesRoute.request(
+        '/unique-code/redeem-firebase',
+        {
+          method: 'PATCH',
+          body: JSON.stringify({
+            firebaseToken: 'unique-firebase-token',
+          }),
+        }
+      )
+
+      expect(response.headers.get('Set-Cookie')).toBe(
+        'refreshToken=unique-refresh-token; HttpOnly; Path=/;'
+      )
+      expect(response.status).toBe(200)
+      expect(mockedAuthService.redeemInvitaWithFirebaseToken).toBeCalledWith(
+        'unique-code',
+        'unique-firebase-token'
       )
     })
   })
