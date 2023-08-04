@@ -1,0 +1,55 @@
+/v1/invites/{inviteCode}:
+  get:
+    tags:
+      - Invites
+    summary: Check if invite code is valid
+    description: Check if invite code is valid
+    operationId: checkInviteCode
+    parameters:
+      - name: inviteCode
+        in: path
+        description: Invite code
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            example:
+              status: OK
+/v1/invites/{inviteCode}/redeem-firebase:
+  patch:
+    tags:
+      - Invites
+    summary: Reddeem invite code with firebase token
+    description: Reddeem invite code with firebase token
+    operationId: redeemInviteCodeFirebase
+    parameters:
+      - name: inviteCode
+        in: path
+        description: Invite code
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              firebaseToken:
+                type: string
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accessToken:
+                  type: string
+                  description: Access token

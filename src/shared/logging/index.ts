@@ -1,5 +1,5 @@
 import Logger from './logger'
-import { Config } from '@config'
+import { Config } from 'src/shared/config'
 import { createConsoleTransport } from './transports'
 
 const consoleTransport = createConsoleTransport({

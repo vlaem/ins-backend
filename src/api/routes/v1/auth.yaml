@@ -1,0 +1,72 @@
+/v1/auth/login-with-firebase:
+  post:
+    tags:
+      - Auth
+    summary: Login with Firebase
+    description: Login with Firebase
+    operationId: loginWithFirebase
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              firebaseToken:
+                type: string
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accessToken:
+                  type: string
+                  description: Access token
+/v1/auth/refresh:
+  post:
+    tags:
+      - Auth
+    summary: Refresh access token
+    description: Refresh access token
+    operationId: refreshAccessToken
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              refreshToken:
+                type: string
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accessToken:
+                  type: string
+                  description: Access token
+/v1/auth/logout:
+  post:
+    tags:
+      - Auth
+    summary: Logout
+    description: Logout
+    operationId: logout
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  description: Message
+            example:
+              message: Logout successful.
