@@ -23,7 +23,6 @@
     "html-minifier": "^4.0.0",
     "jsonwebtoken": "^9.0.1",
     "luxon": "^3.3.0",
-    "mustache": "^4.2.0",
     "pg": "^8.11.1",
     "safe-stable-stringify": "^2.4.3",
     "swagger-jsdoc": "^6.2.8",
