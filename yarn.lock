@@ -1338,11 +1338,6 @@
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.1.tgz#20f18294f797f2209b5f65c8e3b5c8e8261d127c"
   integrity sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==
 
-"@types/swagger-jsdoc@^6.0.1":
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/@types/swagger-jsdoc/-/swagger-jsdoc-6.0.1.tgz#94a99aca0356cb64ad2a6eb903ed034703453801"
-  integrity sha512-+MUpcbyxD528dECUBCEVm6abNuORdbuGjbrUdHDeAQ+rkPuo2a+L4N02WJHF3bonSSE6SJ3dUJwF2V6+cHnf0w==
-
 "@types/triple-beam@^1.3.2":
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/@types/triple-beam/-/triple-beam-1.3.2.tgz#38ecb64f01aa0d02b7c8f4222d7c38af6316fef8"
@@ -2652,6 +2647,14 @@ has@^1.0.3:
   integrity sha512-f2dvO0VU6Oej7RkWJGrehjbzMAjFp5/VKPp5tTpWIV4JHHZK1/BxbFRtf/siA2SWTe09caDmVtYYzWEIbBS4zw==
   dependencies:
     function-bind "^1.1.1"
+
+hono-swagger-jsdoc@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/hono-swagger-jsdoc/-/hono-swagger-jsdoc-0.0.2.tgz#f47567f26bf8ebf38ab48bfe8aeac3b5d5a0f262"
+  integrity sha512-RJus37n5TV0HO7D5EWSJqu3JhE+LGdM21vp6Q+R28Fou/wc1wSbUO/MjhVViCvUpZvBhssohSLO5n6sZaaEyZQ==
+  dependencies:
+    hono "^3.3.4"
+    swagger-jsdoc "^6.2.8"
 
 hono@^3.3.4:
   version "3.3.4"

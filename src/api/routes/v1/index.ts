@@ -2,7 +2,7 @@ import HealthRoute from './health'
 import AuthRoute from './auth'
 import InvitesRoute from './invites'
 import { Hono } from 'hono'
-import { honoSwaggerJsdoc } from 'src/api/hono-swagger'
+import { honoSwaggerJsdoc } from 'hono-swagger-jsdoc'
 
 const V1Route = new Hono()
 
