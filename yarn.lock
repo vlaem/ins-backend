@@ -2648,10 +2648,10 @@ has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
-hono-swagger-jsdoc@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/hono-swagger-jsdoc/-/hono-swagger-jsdoc-0.0.2.tgz#f47567f26bf8ebf38ab48bfe8aeac3b5d5a0f262"
-  integrity sha512-RJus37n5TV0HO7D5EWSJqu3JhE+LGdM21vp6Q+R28Fou/wc1wSbUO/MjhVViCvUpZvBhssohSLO5n6sZaaEyZQ==
+hono-swagger-jsdoc@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/hono-swagger-jsdoc/-/hono-swagger-jsdoc-0.0.5.tgz#5ca04197b1adce44722f908276b3e615e9e8fd6d"
+  integrity sha512-9CkaJuciSe6xL5zK4N4fkdd94U3fgkT/IKHXL33tKH9hyZUJ7OT4KOKS9PGIGtVBg+SGLkxoqSnicRkrWnOfXg==
   dependencies:
     hono "^3.3.4"
     swagger-jsdoc "^6.2.8"

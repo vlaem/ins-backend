@@ -12,7 +12,6 @@ app.use('/*', metrics())
 app.get(
   '/api-docs',
   honoSwaggerUI({
-    route: '/api-docs',
     urls: [{ url: '/v1/swagger.json', name: 'v1' }],
   })
 )
