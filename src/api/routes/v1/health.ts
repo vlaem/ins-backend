@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 const HealthRoute = new Hono()
 
 HealthRoute.get('/', (c) =>
-  c.json({
+  c.jsonT({
     status: 'OK',
   })
 )

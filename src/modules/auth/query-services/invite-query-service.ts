@@ -1,7 +1,11 @@
 import { InviteRepository } from 'src/modules/auth/infra/repositories'
 import { ResourceNotFoundError } from 'src/shared/errors'
 
-export async function getInvite(inviteCode: string) {
+interface InviteView {
+  id: string
+}
+
+export async function getInvite(inviteCode: string): Promise<InviteView> {
   const invite = await InviteRepository.findOneNonExpiredById(inviteCode)
 
   if (!invite) {

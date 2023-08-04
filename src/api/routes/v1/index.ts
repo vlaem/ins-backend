@@ -12,7 +12,7 @@ V1Route.route('/invites', InvitesRoute)
 
 V1Route.get('/swagger.json', (c) => {
   c.header('Content-Type', 'application/json')
-  return c.json(spec, 200)
+  return c.jsonT(spec, 200)
 })
 
 export default V1Route

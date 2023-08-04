@@ -142,7 +142,8 @@ export async function logout(refreshToken: string): Promise<void> {
     await UserRefreshTokenRepository.findOneNonExpiredById(refreshToken)
 
   if (!existingUserRefreshToken) {
-    throw new InvalidOperationError('INVALID_REFRESH_TOKEN')
+    // It is fine to not find a refresh token when logging out, the controller should still attempt to destroy the cookie
+    return
   }
 
   await UserRefreshTokenRepository.destroy(existingUserRefreshToken)
