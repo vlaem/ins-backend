@@ -11,7 +11,7 @@ import { CurrentUserQueryService, InviteQueryService } from './query-services'
 
 export function registerAuthModule(bottle: Bottle) {
   // Register Infra
-  bottle.service('Auth.FirebaseAdmin', FirebaseAdmin, 'logger')
+  bottle.service('Auth.FirebaseAdmin', FirebaseAdmin, 'logger', 'config')
   bottle.service('Auth.InviteRepository', InviteRepository)
   bottle.service('Auth.UserRefreshTokenRepository', UserRefreshTokenRepository)
   bottle.service('Auth.UserRepository', UserRepository)

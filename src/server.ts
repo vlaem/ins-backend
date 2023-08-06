@@ -8,7 +8,6 @@ const config = bottle.container.config as Config
 config.load()
 
 const logger = bottle.container.logger as Logger
-
 const app = bottle.container.app as ReturnType<typeof createApp>
 
 honoNodeServe(

@@ -22,6 +22,7 @@ export function createApp(
   )
 
   app.get('/', (c) => c.redirect('/api-docs'))
+
   app.route('/v1', V1Route)
 
   return app

@@ -19,9 +19,9 @@ export function registerApi(bottle: Bottle) {
   bottle.service(
     'V1Route',
     createV1Route,
-    'HealthRoute',
-    'AuthRoute',
-    'InviteRoute'
+    'healthRoute',
+    'authRoute',
+    'inviteRoute'
   )
   bottle.service('app', createApp, 'V1Route', 'logger')
 }
