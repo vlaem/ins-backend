@@ -1,9 +1,9 @@
-import { createAuthRoute } from './auth'
+import { AuthRoute, createAuthRoute } from './auth'
 import { AuthService } from 'src/modules/auth'
 import { mock } from 'jest-mock-extended'
 
 describe('AuthRoute', () => {
-  let AuthRoute: ReturnType<typeof createAuthRoute>
+  let AuthRoute: AuthRoute
   let mockedAuthService: ReturnType<typeof mock<AuthService>>
 
   beforeEach(() => {

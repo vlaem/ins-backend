@@ -1,7 +1,7 @@
-import { createHealthRoute } from './health'
+import { HealthRoute, createHealthRoute } from './health'
 
 describe('HealthRoute', () => {
-  let healthRoute: ReturnType<typeof createHealthRoute>
+  let healthRoute: HealthRoute
 
   beforeEach(() => {
     healthRoute = createHealthRoute()

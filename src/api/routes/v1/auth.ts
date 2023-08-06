@@ -71,3 +71,5 @@ export function createAuthRoute(authService: AuthService) {
 
   return AuthRoute
 }
+
+export type AuthRoute = ReturnType<typeof createAuthRoute>

@@ -26,7 +26,8 @@ export function registerAuthModule(bottle: Bottle) {
     'Auth.UserRefreshTokenRepository',
     'Auth.UserRepository',
     'Auth.JwtHelper',
-    'sequelize'
+    'sequelize',
+    'logger'
   )
 
   // Register Query Services

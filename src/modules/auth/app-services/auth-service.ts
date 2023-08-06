@@ -3,6 +3,7 @@ import bycrypt from 'bcryptjs'
 import { DateTime } from 'luxon'
 import {
   JwtHelper,
+  JwtPayload,
   FirebaseAdmin,
   InviteRepository,
   UserRepository,
@@ -10,6 +11,7 @@ import {
 } from 'src/modules/auth/infra'
 import { UserRefreshToken, User } from 'src/modules/auth/domain/models'
 import { InvalidOperationError, ResourceNotFoundError } from '#errors'
+import { Logger } from '#logger'
 
 interface AuthTokenPayload {
   accessToken: string
@@ -31,6 +33,7 @@ export class AuthService {
   private userRepository: UserRepository
   private jwtHelper: JwtHelper
   private sequelize: Sequelize
+  private logger: Logger
 
   constructor(
     firebaseAdmin: FirebaseAdmin,
@@ -38,7 +41,8 @@ export class AuthService {
     userRefreshTokenRepository: UserRefreshTokenRepository,
     userRepository: UserRepository,
     jwtHelper: JwtHelper,
-    sequelize: Sequelize
+    sequelize: Sequelize,
+    logger: Logger
   ) {
     this.firebaseAdmin = firebaseAdmin
     this.inviteRepository = inviteRepository
@@ -46,6 +50,7 @@ export class AuthService {
     this.userRepository = userRepository
     this.jwtHelper = jwtHelper
     this.sequelize = sequelize
+    this.logger = logger
   }
 
   /**
@@ -248,6 +253,16 @@ export class AuthService {
     return {
       accessToken: newTokenGroup.accessToken,
       refreshToken: newTokenGroup.userRefreshToken.id,
+    }
+  }
+
+  async verifyToken(token: string): Promise<JwtPayload | null> {
+    try {
+      const payload = this.jwtHelper.decode(token)
+      return payload
+    } catch (err) {
+      this.logger.error(err)
+      return null
     }
   }
 }

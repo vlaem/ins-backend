@@ -47,3 +47,5 @@ export function createInviteRoute(
 
   return InvitesRoute
 }
+
+export type InviteRoute = ReturnType<typeof createInviteRoute>

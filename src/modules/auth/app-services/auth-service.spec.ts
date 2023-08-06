@@ -10,6 +10,7 @@ import { Sequelize } from '@sequelize/core'
 import { UserRefreshToken, User, Invite } from 'src/modules/auth/domain/models'
 import { InvalidOperationError } from '#errors'
 import { mock } from 'jest-mock-extended'
+import { Logger } from '#logger'
 
 jest.mock('src/modules/auth/domain/models')
 const mockedUser = User as jest.Mocked<typeof User>
@@ -29,6 +30,7 @@ describe('authService', () => {
   let mockedJwtHelper: ReturnType<typeof mock<JwtHelper>>
   let mockedFirebaseAdmin: ReturnType<typeof mock<FirebaseAdmin>>
   let mockedSequelize: ReturnType<typeof mock<Sequelize>>
+  let mockedLogger: ReturnType<typeof mock<Logger>>
 
   beforeEach(() => {
     mockedInviteRepository = mock<InviteRepository>()
@@ -37,6 +39,7 @@ describe('authService', () => {
     mockedJwtHelper = mock<JwtHelper>()
     mockedFirebaseAdmin = mock<FirebaseAdmin>()
     mockedSequelize = mock<Sequelize>()
+    mockedLogger = mock<Logger>()
 
     authService = new AuthService(
       mockedFirebaseAdmin,
@@ -44,7 +47,8 @@ describe('authService', () => {
       mockedUserRefreshTokenRepository,
       mockedUserRepository,
       mockedJwtHelper,
-      mockedSequelize
+      mockedSequelize,
+      mockedLogger
     )
   })
 

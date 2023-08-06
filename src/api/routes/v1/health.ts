@@ -11,3 +11,5 @@ export function createHealthRoute() {
 
   return HealthRoute
 }
+
+export type HealthRoute = ReturnType<typeof createHealthRoute>

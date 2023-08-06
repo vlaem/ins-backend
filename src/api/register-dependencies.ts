@@ -3,11 +3,25 @@ import {
   createAuthRoute,
   createHealthRoute,
   createInviteRoute,
+  createCurrentUserRoute,
   createV1Route,
 } from './routes/v1'
+import {
+  createMetricsMiddleware,
+  createAuthorizeMiddleware,
+} from './middlewares'
 import { createApp } from './app'
 
 export function registerApi(bottle: Bottle) {
+  // Middleware
+  bottle.service('metricsMiddleware', createMetricsMiddleware, 'logger')
+  bottle.service(
+    'authorizeMiddleware',
+    createAuthorizeMiddleware,
+    'Auth.AuthService'
+  )
+
+  // Routes
   bottle.service('healthRoute', createHealthRoute)
   bottle.service('authRoute', createAuthRoute, 'Auth.AuthService')
   bottle.service(
@@ -17,11 +31,17 @@ export function registerApi(bottle: Bottle) {
     'Auth.InviteQueryService'
   )
   bottle.service(
+    'currentUserRoute',
+    createCurrentUserRoute,
+    'Auth.CurrentUserQueryService'
+  )
+  bottle.service(
     'V1Route',
     createV1Route,
     'healthRoute',
     'authRoute',
     'inviteRoute'
   )
-  bottle.service('app', createApp, 'V1Route', 'logger')
+
+  bottle.service('app', createApp, 'V1Route', 'metricsMiddleware')
 }

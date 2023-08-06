@@ -1,9 +1,9 @@
-import { createInviteRoute } from './invites'
+import { createInviteRoute, InviteRoute } from './invites'
 import { AuthService, InviteQueryService } from 'src/modules/auth'
 import { mock } from 'jest-mock-extended'
 
 describe('InvitesRoute', () => {
-  let InvitesRoute: ReturnType<typeof createInviteRoute>
+  let InvitesRoute: InviteRoute
   let mockedAuthService: ReturnType<typeof mock<AuthService>>
   let mockedInviteQueryService: ReturnType<typeof mock<InviteQueryService>>
 

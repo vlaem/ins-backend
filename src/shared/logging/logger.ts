@@ -33,35 +33,51 @@ export class Logger {
     }
   }
 
-  public emerg(message: string, ...meta: any[]) {
+  emerg(message: any): void
+  emerg(message: string, ...meta: any[]): void
+  emerg(message: any, ...meta: any[]) {
     this.winstonLogger.emerg(message, ...meta)
   }
 
-  public alert(message: string, ...meta: any[]) {
+  alert(message: any): void
+  alert(message: string, ...meta: any[]): void
+  alert(message: any, ...meta: any[]) {
     this.winstonLogger.alert(message, ...meta)
   }
 
-  public crit(message: string, ...meta: any[]) {
+  crit(message: any): void
+  crit(message: string, ...meta: any[]): void
+  crit(message: any, ...meta: any[]) {
     this.winstonLogger.crit(message, ...meta)
   }
 
-  public error(message: string, ...meta: any[]) {
+  error(message: any): void
+  error(message: string, ...meta: any[]): void
+  error(message: any, ...meta: any[]) {
     this.winstonLogger.error(message, ...meta)
   }
 
-  public warning(message: string, ...meta: any[]) {
+  warning(message: any): void
+  warning(message: string, ...meta: any[]): void
+  warning(message: any, ...meta: any[]) {
     this.winstonLogger.warning(message, ...meta)
   }
 
-  public notice(message: string, ...meta: any[]) {
+  notice(message: any): void
+  notice(message: string, ...meta: any[]): void
+  notice(message: any, ...meta: any[]) {
     this.winstonLogger.notice(message, ...meta)
   }
 
-  public info(message: string, ...meta: any[]) {
+  info(message: any): void
+  info(message: string, ...meta: any[]): void
+  info(message: any, ...meta: any[]) {
     this.winstonLogger.info(message, ...meta)
   }
 
-  public debug(message: string, ...meta: any[]) {
+  debug(message: any): void
+  debug(message: string, ...meta: any[]): void
+  debug(message: any, ...meta: any[]) {
     this.winstonLogger.debug(message, ...meta)
   }
 }
