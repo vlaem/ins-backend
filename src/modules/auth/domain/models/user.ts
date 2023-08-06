@@ -1,9 +1,12 @@
 import { v4 as uuidv4 } from 'uuid'
+import { DateTime } from 'luxon'
 
 interface UserModelData {
   id: string
   email: string
   password: string
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 export class User {
@@ -13,6 +16,8 @@ export class User {
     user._id = uuidv4()
     user._email = email
     user._password = password
+    user._createdAt = DateTime.now()
+    user._updatedAt = DateTime.now()
 
     return user
   }
@@ -23,6 +28,8 @@ export class User {
     user._id = uuidv4()
     user._email = email
     user._firebaseUid = firebaseUid
+    user._createdAt = DateTime.now()
+    user._updatedAt = DateTime.now()
 
     return user
   }
@@ -38,6 +45,8 @@ export class User {
     user._id = data.id
     user._email = data.email
     user._password = data.password
+    user._createdAt = data.createdAt
+    user._updatedAt = data.updatedAt
 
     return user
   }
@@ -62,5 +71,15 @@ export class User {
   private _firebaseUid: string = ''
   get firebaseUid(): string {
     return this._firebaseUid
+  }
+
+  private _createdAt: DateTime = DateTime.now()
+  get createdAt(): DateTime {
+    return this._createdAt
+  }
+
+  private _updatedAt: DateTime = DateTime.now()
+  get updatedAt(): DateTime {
+    return this._updatedAt
   }
 }

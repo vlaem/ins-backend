@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import { Op, FindOptions, InferAttributes } from '@sequelize/core'
 import { Invite } from 'src/modules/auth/domain/models'
-import { InviteModel } from '@dbmodels/auth'
+import { InviteModel } from '#dbmodels/auth'
 import { GenericRepository } from './generic-repository'
 
 export class InviteRepository
@@ -35,6 +35,7 @@ export class InviteRepository
     await InviteModel.create({
       id: refreshToken.id,
       expiresAt: refreshToken.expiresAt,
+      createdAt: refreshToken.createdAt,
     })
   }
 

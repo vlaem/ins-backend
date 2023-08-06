@@ -4,40 +4,46 @@ import { zValidator } from '@hono/zod-validator'
 import { AuthService, InviteQueryService } from 'src/modules/auth'
 import { setCookie } from 'hono/cookie'
 
-const InvitesRoute = new Hono()
+export function createInviteRoute(
+  authService: AuthService,
+  inviteQueryService: InviteQueryService
+) {
+  const InvitesRoute = new Hono()
 
-InvitesRoute.get('/:inviteCode', async (c) => {
-  const inviteCode = c.req.param('inviteCode')
-  const result = await InviteQueryService.getInvite(inviteCode)
-  return c.json(result, 200)
-})
-
-const redeemFirebase = z.object({
-  firebaseToken: z.string().trim().nonempty(),
-})
-
-InvitesRoute.patch(
-  '/:inviteCode/redeem-firebase',
-  zValidator('json', redeemFirebase),
-  async (c) => {
-    const data = c.req.valid('json')
+  InvitesRoute.get('/:inviteCode', async (c) => {
     const inviteCode = c.req.param('inviteCode')
-    const payload = await AuthService.redeemInvitaWithFirebaseToken(
-      inviteCode,
-      data.firebaseToken
-    )
 
-    setCookie(c, 'refresh_token', payload.refreshToken, {
-      httpOnly: true,
-    })
+    const result = await inviteQueryService.getInvite(inviteCode)
+    return c.json(result, 200)
+  })
 
-    return c.json(
-      {
-        accessToken: payload.accessToken,
-      },
-      200
-    )
-  }
-)
+  const redeemFirebase = z.object({
+    firebaseToken: z.string().trim().nonempty(),
+  })
 
-export default InvitesRoute
+  InvitesRoute.patch(
+    '/:inviteCode/redeem-firebase',
+    zValidator('json', redeemFirebase),
+    async (c) => {
+      const data = c.req.valid('json')
+      const inviteCode = c.req.param('inviteCode')
+      const payload = await authService.redeemInvitaWithFirebaseToken(
+        inviteCode,
+        data.firebaseToken
+      )
+
+      setCookie(c, 'refresh_token', payload.refreshToken, {
+        httpOnly: true,
+      })
+
+      return c.json(
+        {
+          accessToken: payload.accessToken,
+        },
+        200
+      )
+    }
+  )
+
+  return InvitesRoute
+}

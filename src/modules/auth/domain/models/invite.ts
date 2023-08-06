@@ -4,6 +4,7 @@ import uidSafe from 'uid-safe'
 interface InviteData {
   id: string
   expiresAt: DateTime
+  createdAt: DateTime
 }
 
 export class Invite {
@@ -12,6 +13,7 @@ export class Invite {
 
     invite._id = uidSafe.sync(32)
     invite._expiresAt = DateTime.now().plus({ days: 1 })
+    invite._createdAt = DateTime.now()
     return invite
   }
 
@@ -20,6 +22,7 @@ export class Invite {
 
     invite._id = data.id
     invite._expiresAt = data.expiresAt
+    invite._createdAt = data.createdAt
 
     return invite
   }
@@ -34,5 +37,10 @@ export class Invite {
   private _expiresAt: DateTime = DateTime.now()
   get expiresAt(): DateTime {
     return this._expiresAt
+  }
+
+  private _createdAt: DateTime = DateTime.now()
+  get createdAt(): DateTime {
+    return this._createdAt
   }
 }

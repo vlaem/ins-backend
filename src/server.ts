@@ -1,4 +1,4 @@
-import { Config } from './shared/config'
+import { Config } from '#config'
 import { serve as honoNodeServe } from '@hono/node-server'
 import app from 'src/api/app'
 import logger from '#logger'

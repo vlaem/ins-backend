@@ -1,10 +1,22 @@
-import InvitesRoute from './invites'
-import { AuthService } from 'src/modules/auth'
-
-jest.mock('src/modules/auth')
-const mockedAuthService = AuthService as jest.Mocked<typeof AuthService>
+import { createInviteRoute } from './invites'
+import { AuthService, InviteQueryService } from 'src/modules/auth'
+import { mock } from 'jest-mock-extended'
 
 describe('InvitesRoute', () => {
+  let InvitesRoute: ReturnType<typeof createInviteRoute>
+  let mockedAuthService: ReturnType<typeof mock<AuthService>>
+  let mockedInviteQueryService: ReturnType<typeof mock<InviteQueryService>>
+
+  beforeEach(() => {
+    mockedAuthService = mock<AuthService>()
+    mockedInviteQueryService = mock<InviteQueryService>()
+
+    InvitesRoute = createInviteRoute(
+      mockedAuthService,
+      mockedInviteQueryService
+    )
+  })
+
   describe('redeemInviteCodeFirebase', () => {
     it('should return 200', async () => {
       mockedAuthService.redeemInvitaWithFirebaseToken.mockResolvedValueOnce({

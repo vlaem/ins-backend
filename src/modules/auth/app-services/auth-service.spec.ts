@@ -1,24 +1,15 @@
 import { AuthService } from 'src/modules/auth'
 import {
+  JwtHelper,
+  FirebaseAdmin,
   InviteRepository,
   UserRepository,
   UserRefreshTokenRepository,
-} from 'src/modules/auth/infra/repositories'
-import * as JWT from 'src/shared/jwt'
-import { sequelize } from '@db'
+} from 'src/modules/auth/infra'
+import { Sequelize } from '@sequelize/core'
 import { UserRefreshToken, User, Invite } from 'src/modules/auth/domain/models'
 import { InvalidOperationError } from '#errors'
-import { FirebaseAdmin } from 'src/modules/auth/infra/firebase'
-
-jest.mock('src/modules/auth/infra/repositories')
-const mockedInviteRepository = InviteRepository as jest.Mocked<
-  typeof InviteRepository
->
-const mockedUserRepository = UserRepository as jest.Mocked<
-  typeof UserRepository
->
-const mockedUserRefreshTokenRepository =
-  UserRefreshTokenRepository as jest.Mocked<typeof UserRefreshTokenRepository>
+import { mock } from 'jest-mock-extended'
 
 jest.mock('src/modules/auth/domain/models')
 const mockedUser = User as jest.Mocked<typeof User>
@@ -27,16 +18,36 @@ const mockedUserRefreshToken = UserRefreshToken as jest.Mocked<
 >
 const mockedInvite = Invite as jest.Mocked<typeof Invite>
 
-jest.mock('src/modules/auth/infra/firebase')
-const mockedFirebaseAdmin = FirebaseAdmin as jest.Mocked<typeof FirebaseAdmin>
+describe('authService', () => {
+  let authService: AuthService
 
-jest.mock('src/shared/jwt')
-const mockedJWT = JWT as jest.Mocked<typeof JWT>
+  let mockedInviteRepository: ReturnType<typeof mock<InviteRepository>>
+  let mockedUserRepository: ReturnType<typeof mock<UserRepository>>
+  let mockedUserRefreshTokenRepository: ReturnType<
+    typeof mock<UserRefreshTokenRepository>
+  >
+  let mockedJwtHelper: ReturnType<typeof mock<JwtHelper>>
+  let mockedFirebaseAdmin: ReturnType<typeof mock<FirebaseAdmin>>
+  let mockedSequelize: ReturnType<typeof mock<Sequelize>>
 
-jest.mock('src/shared/jwt')
-const mockedSequelize = sequelize as jest.Mocked<typeof sequelize>
+  beforeEach(() => {
+    mockedInviteRepository = mock<InviteRepository>()
+    mockedUserRepository = mock<UserRepository>()
+    mockedUserRefreshTokenRepository = mock<UserRefreshTokenRepository>()
+    mockedJwtHelper = mock<JwtHelper>()
+    mockedFirebaseAdmin = mock<FirebaseAdmin>()
+    mockedSequelize = mock<Sequelize>()
 
-describe('AuthService', () => {
+    authService = new AuthService(
+      mockedFirebaseAdmin,
+      mockedInviteRepository,
+      mockedUserRefreshTokenRepository,
+      mockedUserRepository,
+      mockedJwtHelper,
+      mockedSequelize
+    )
+  })
+
   describe('firebaseLogin', () => {
     it('should throw an InvalidOperationError if the email is not found', async () => {
       mockedFirebaseAdmin.decodeToken.mockResolvedValueOnce({
@@ -46,7 +57,7 @@ describe('AuthService', () => {
       mockedUserRepository.findByEmail.mockResolvedValueOnce(null)
 
       await expect(
-        AuthService.firebaseLogin('unique-firebase-token')
+        authService.firebaseLogin('unique-firebase-token')
       ).rejects.toThrowError(new InvalidOperationError('USER_NOT_FOUND'))
     })
     it('should return a token and a refresh token', async () => {
@@ -58,7 +69,7 @@ describe('AuthService', () => {
       const user = new (mockedUser as any).constructor()
       mockedUserRepository.findByEmail.mockResolvedValueOnce(user)
 
-      mockedJWT.encode.mockReturnValueOnce('unique-access-token')
+      mockedJwtHelper.encode.mockReturnValueOnce('unique-access-token')
 
       const newUserRefreshToken = new (
         mockedUserRefreshToken as any
@@ -66,7 +77,7 @@ describe('AuthService', () => {
       newUserRefreshToken.id = 'unique-refresh-token-id'
       mockedUserRefreshToken.create.mockReturnValueOnce(newUserRefreshToken)
 
-      const result = await AuthService.firebaseLogin('unique-firebase-token')
+      const result = await authService.firebaseLogin('unique-firebase-token')
 
       expect(mockedUserRefreshTokenRepository.add).toHaveBeenCalledWith(
         newUserRefreshToken
@@ -85,7 +96,7 @@ describe('AuthService', () => {
       )
 
       await expect(
-        AuthService.refresh('unique-refresh-token')
+        authService.refresh('unique-refresh-token')
       ).rejects.toThrowError(new InvalidOperationError('INVALID_REFRESH_TOKEN'))
     })
     it('should throw an InvalidOperationError if the user is not found', async () => {
@@ -97,7 +108,7 @@ describe('AuthService', () => {
       mockedUserRepository.findByPk.mockResolvedValueOnce(null)
 
       await expect(
-        AuthService.refresh('unique-refresh-token')
+        authService.refresh('unique-refresh-token')
       ).rejects.toThrowError(new InvalidOperationError('INVALID_REFRESH_TOKEN'))
     })
     it('should return a token and a refresh token', async () => {
@@ -109,7 +120,7 @@ describe('AuthService', () => {
       const user = new (mockedUser as any).constructor()
       mockedUserRepository.findByPk.mockResolvedValueOnce(user)
 
-      mockedJWT.encode.mockReturnValueOnce('unique-access-token')
+      mockedJwtHelper.encode.mockReturnValueOnce('unique-access-token')
 
       const newUserRefreshToken = new (
         mockedUserRefreshToken as any
@@ -121,7 +132,7 @@ describe('AuthService', () => {
         callback()
       )
 
-      const result = await AuthService.refresh('unique-refresh-token')
+      const result = await authService.refresh('unique-refresh-token')
 
       expect(mockedUserRefreshTokenRepository.add).toHaveBeenCalledWith(
         newUserRefreshToken
@@ -141,7 +152,7 @@ describe('AuthService', () => {
         null
       )
 
-      await AuthService.logout('unique-refresh-token')
+      await authService.logout('unique-refresh-token')
       expect(mockedUserRefreshTokenRepository.destroy).not.toHaveBeenCalled()
     })
     it('should destroy the refresh token', async () => {
@@ -150,7 +161,7 @@ describe('AuthService', () => {
         refreshToken
       )
 
-      await AuthService.logout('unique-refresh-token')
+      await authService.logout('unique-refresh-token')
 
       expect(mockedUserRefreshTokenRepository.destroy).toHaveBeenCalledWith(
         refreshToken
@@ -162,7 +173,7 @@ describe('AuthService', () => {
       mockedInviteRepository.findOneNonExpiredById.mockResolvedValueOnce(null)
 
       await expect(
-        AuthService.redeemInvitaWithFirebaseToken(
+        authService.redeemInvitaWithFirebaseToken(
           'unique-code',
           'unique-firebase-token'
         )
@@ -183,7 +194,7 @@ describe('AuthService', () => {
       })
 
       await expect(
-        AuthService.redeemInvitaWithFirebaseToken(
+        authService.redeemInvitaWithFirebaseToken(
           'unique-code',
           'unique-firebase-token'
         )
@@ -208,7 +219,7 @@ describe('AuthService', () => {
       newUser.firebaseUid = 'firebase-uid'
 
       mockedUser.createWithFirebaseUid.mockReturnValueOnce(newUser)
-      mockedJWT.encode.mockReturnValueOnce('unique-access-token')
+      mockedJwtHelper.encode.mockReturnValueOnce('unique-access-token')
 
       const newUserRefreshToken = new (
         mockedUserRefreshToken as any
@@ -220,7 +231,7 @@ describe('AuthService', () => {
         callback()
       )
 
-      const result = await AuthService.redeemInvitaWithFirebaseToken(
+      const result = await authService.redeemInvitaWithFirebaseToken(
         'unique-code',
         'unique-firebase-token'
       )

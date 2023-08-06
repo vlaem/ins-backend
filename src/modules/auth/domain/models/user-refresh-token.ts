@@ -5,6 +5,7 @@ interface UserRefreshTokenData {
   id: string
   userId: string
   expiresAt: DateTime
+  createdAt: DateTime
 }
 
 export class UserRefreshToken {
@@ -14,6 +15,7 @@ export class UserRefreshToken {
     token._id = uidSafe.sync(32)
     token._userId = userId
     token._expiresAt = expiresAt
+    token._createdAt = DateTime.now()
 
     return token
   }
@@ -24,6 +26,7 @@ export class UserRefreshToken {
     token._id = data.id
     token._userId = data.userId
     token._expiresAt = data.expiresAt
+    token._createdAt = data.createdAt
 
     return token
   }
@@ -43,5 +46,10 @@ export class UserRefreshToken {
   private _expiresAt: DateTime = DateTime.now()
   get expiresAt(): DateTime {
     return this._expiresAt
+  }
+
+  private _createdAt: DateTime = DateTime.now()
+  get createdAt(): DateTime {
+    return this._createdAt
   }
 }

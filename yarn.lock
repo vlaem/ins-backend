@@ -1658,6 +1658,11 @@ bnf-parser@3.1.4:
   resolved "https://registry.yarnpkg.com/bnf-parser/-/bnf-parser-3.1.4.tgz#98710c8bb90e275b431e2e1625dee5b51ab895c0"
   integrity sha512-4UCFYI4QIcGcVMCmUvC9W4KC1cTAd3zVxrP2b35LD43Lf5WI+0vE2TFIrUD6otfqO7swTAxTb7ju+YladRI91A==
 
+bottlejs@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/bottlejs/-/bottlejs-2.0.1.tgz#f2c97b3ee7a180a1a42c5156eb7ac5b7a2beaf09"
+  integrity sha512-50T0bzqeAqZ+//kgjdDxNu7UP8Je04isNPyHPwwOOPoeZmtVESkuF9nwkWEqSEd9Sw1yJ1oaoHBAMxe/wG4Zzg==
+
 bplist-parser@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/bplist-parser/-/bplist-parser-0.2.0.tgz#43a9d183e5bf9d545200ceac3e712f79ebbe8d0e"
@@ -3058,6 +3063,13 @@ jest-message-util@^29.6.2:
     pretty-format "^29.6.2"
     slash "^3.0.0"
     stack-utils "^2.0.3"
+
+jest-mock-extended@^3.0.5:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/jest-mock-extended/-/jest-mock-extended-3.0.5.tgz#ebf208e363f4f1db603b81fb005c4055b7c1c8b7"
+  integrity sha512-/eHdaNPUAXe7f65gHH5urc8SbRVWjYxBqmCgax2uqOBJy8UUcCBMN1upj1eZ8y/i+IqpyEm4Kq0VKss/GCCTdw==
+  dependencies:
+    ts-essentials "^7.0.3"
 
 jest-mock@^29.6.2:
   version "29.6.2"
@@ -4524,6 +4536,11 @@ ts-api-utils@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/ts-api-utils/-/ts-api-utils-1.0.1.tgz#8144e811d44c749cd65b2da305a032510774452d"
   integrity sha512-lC/RGlPmwdrIBFTX59wwNzqh7aR2otPNPR/5brHZm/XKFYKsfqxihXUe9pU3JI+3vGkl+vyCoNNnPhJn3aLK1A==
+
+ts-essentials@^7.0.3:
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/ts-essentials/-/ts-essentials-7.0.3.tgz#686fd155a02133eedcc5362dc8b5056cde3e5a38"
+  integrity sha512-8+gr5+lqO3G84KdiTSMRLtuyJ+nTBVRKuCrK4lidMPdVeEp0uqC875uE5NMcaA7YYMN7XsNiFQuMvasF8HT/xQ==
 
 ts-jest@^29.1.1:
   version "29.1.1"

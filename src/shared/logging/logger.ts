@@ -11,7 +11,7 @@ winston.addColors({
   debug: 'blue',
 })
 
-class Logger {
+export class Logger {
   protected winstonLogger: winston.Logger
 
   constructor(
@@ -65,5 +65,3 @@ class Logger {
     this.winstonLogger.debug(message, ...meta)
   }
 }
-
-export default Logger

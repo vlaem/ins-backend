@@ -1,12 +1,16 @@
-jest.mock('src/shared/db')
-
-import AuthRoute from './auth'
+import { createAuthRoute } from './auth'
 import { AuthService } from 'src/modules/auth'
-
-jest.mock('src/modules/auth')
-const mockedAuthService = AuthService as jest.Mocked<typeof AuthService>
+import { mock } from 'jest-mock-extended'
 
 describe('AuthRoute', () => {
+  let AuthRoute: ReturnType<typeof createAuthRoute>
+  let mockedAuthService: ReturnType<typeof mock<AuthService>>
+
+  beforeEach(() => {
+    mockedAuthService = mock<AuthService>()
+    AuthRoute = createAuthRoute(mockedAuthService)
+  })
+
   describe('login-with-firebase', () => {
     it('should return 200', async () => {
       mockedAuthService.firebaseLogin.mockResolvedValue({

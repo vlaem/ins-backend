@@ -1,4 +1,4 @@
-import { UserModel } from '@dbmodels/auth'
+import { UserModel } from '#dbmodels/auth'
 import { User } from 'src/modules/auth/domain/models'
 import { FindOptions, InferAttributes } from '@sequelize/core'
 import { GenericRepository } from './generic-repository'
@@ -23,6 +23,8 @@ export class UserRepository implements GenericRepository<User, UserModel> {
       id: user.id,
       email: user.email,
       password: user.password,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
     })
   }
 

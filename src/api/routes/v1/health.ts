@@ -1,10 +1,13 @@
 import { Hono } from 'hono'
-const HealthRoute = new Hono()
 
-HealthRoute.get('/', (c) =>
-  c.json({
-    status: 'OK',
-  })
-)
+export function createHealthRoute() {
+  const HealthRoute = new Hono()
 
-export default HealthRoute
+  HealthRoute.get('/', (c) =>
+    c.json({
+      status: 'OK',
+    })
+  )
+
+  return HealthRoute
+}

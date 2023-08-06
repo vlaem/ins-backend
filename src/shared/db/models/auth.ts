@@ -5,7 +5,6 @@ import {
   Model,
   InferAttributes,
   InferCreationAttributes,
-  CreationOptional,
   NonAttribute,
 } from '@sequelize/core'
 import {
@@ -17,7 +16,12 @@ import {
   Unique,
 } from '@sequelize/core/decorators-legacy'
 
-@Table({ schema: 'auth', underscored: true, tableName: 'users' })
+@Table({
+  schema: 'auth',
+  underscored: true,
+  tableName: 'users',
+  timestamps: false,
+})
 export class UserModel extends Model<
   InferAttributes<UserModel>,
   InferCreationAttributes<UserModel>
@@ -35,15 +39,20 @@ export class UserModel extends Model<
   @NotNull
   declare password: string
 
-  declare createdAt: CreationOptional<Date>
-  declare updatedAt: CreationOptional<Date>
+  @Attribute(CustomDataTypes.DateTime)
+  @NotNull
+  declare createdAt: DateTime
+
+  @Attribute(CustomDataTypes.DateTime)
+  @NotNull
+  declare updatedAt: DateTime
 }
 
 @Table({
   schema: 'auth',
   underscored: true,
   tableName: 'user_refresh_tokens',
-  updatedAt: false,
+  timestamps: false,
 })
 export class UserRefreshTokenModel extends Model<
   InferAttributes<UserRefreshTokenModel>,
@@ -64,14 +73,16 @@ export class UserRefreshTokenModel extends Model<
   @NotNull
   declare expiresAt: DateTime
 
-  declare createdAt: CreationOptional<Date>
+  @Attribute(CustomDataTypes.DateTime)
+  @NotNull
+  declare createdAt: DateTime
 }
 
 @Table({
   schema: 'auth',
   underscored: true,
   tableName: 'link_invites',
-  updatedAt: false,
+  timestamps: false,
 })
 export class InviteModel extends Model<
   InferAttributes<InviteModel>,
@@ -85,5 +96,7 @@ export class InviteModel extends Model<
   @NotNull
   declare expiresAt: DateTime
 
-  declare createdAt: CreationOptional<Date>
+  @Attribute(CustomDataTypes.DateTime)
+  @NotNull
+  declare createdAt: DateTime
 }

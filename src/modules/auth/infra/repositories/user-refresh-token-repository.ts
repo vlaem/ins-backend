@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import { Op, FindOptions, InferAttributes } from '@sequelize/core'
 import { UserRefreshToken } from 'src/modules/auth/domain/models'
-import { UserRefreshTokenModel } from '@dbmodels/auth'
+import { UserRefreshTokenModel } from '#dbmodels/auth'
 import { GenericRepository } from './generic-repository'
 
 export class UserRefreshTokenRepository
@@ -26,6 +26,7 @@ export class UserRefreshTokenRepository
       id: refreshToken.id,
       userId: refreshToken.userId,
       expiresAt: refreshToken.expiresAt,
+      createdAt: refreshToken.createdAt,
     })
   }
 

@@ -1,12 +1,18 @@
-import Logger from './logger'
+import { Logger } from './logger'
 import { Config } from 'src/shared/config'
 import { createConsoleTransport } from './transports'
 
-const consoleTransport = createConsoleTransport({
-  level: Config.Logger.Console.Level,
-  silent: Config.Logger.Console.Silent,
-})
+export function loggerFactory(config: Config) {
+  const consoleTransport = createConsoleTransport({
+    level: config.Logger.Console.level,
+    silent: config.Logger.Console.silent,
+  })
 
-const logger = new Logger([consoleTransport])
+  const transports = [consoleTransport]
 
-export default logger
+  const logger = new Logger(transports)
+
+  return logger
+}
+
+export { Logger }

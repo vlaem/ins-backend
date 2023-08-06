@@ -13,9 +13,10 @@
     "paths": {
       "#logger": ["src/shared/logging"],
       "#errors": ["src/shared/errors"],
-      "@db": ["src/shared/db"],
-      "@dbmodels/*": ["src/shared/db/models/*"],
+      "#db": ["src/shared/db"],
+      "#dbmodels/*": ["src/shared/db/models/*"],
       "#config": ["src/shared/config"],
+      "#container": ["src/container"],
       "src": ["src/*"]
     },
     "types": ["node", "jest"],

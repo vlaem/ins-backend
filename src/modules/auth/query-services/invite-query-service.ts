@@ -5,14 +5,21 @@ interface InviteView {
   id: string
 }
 
-export async function getInvite(inviteCode: string): Promise<InviteView> {
-  const invite = await InviteRepository.findOneNonExpiredById(inviteCode)
-
-  if (!invite) {
-    throw new ResourceNotFoundError('INVITE_NOT_FOUND_OR_EXPIRED')
+export class InviteQueryService {
+  private inviteRepository: InviteRepository
+  constructor(inviteRepository: InviteRepository) {
+    this.inviteRepository = inviteRepository
   }
 
-  return {
-    id: invite.id,
+  async getInvite(inviteCode: string): Promise<InviteView> {
+    const invite = await this.inviteRepository.findOneNonExpiredById(inviteCode)
+
+    if (!invite) {
+      throw new ResourceNotFoundError('INVITE_NOT_FOUND_OR_EXPIRED')
+    }
+
+    return {
+      id: invite.id,
+    }
   }
 }
