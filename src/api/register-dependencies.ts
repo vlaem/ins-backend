@@ -5,6 +5,7 @@ import {
   createInviteRoute,
   createV1Route,
 } from './routes/v1'
+import { createApp } from './app'
 
 export function registerApi(bottle: Bottle) {
   bottle.service('healthRoute', createHealthRoute)
@@ -22,4 +23,5 @@ export function registerApi(bottle: Bottle) {
     'AuthRoute',
     'InviteRoute'
   )
+  bottle.service('app', createApp, 'V1Route', 'logger')
 }

@@ -1,14 +1,10 @@
 import Bottle from 'bottlejs'
-import { Config } from 'src/shared/config'
-import { createSequelize, createUmzug } from 'src/shared/db'
-import { loggerFactory } from 'src/shared/logging'
-import { registerAuthModule } from 'src/modules/auth'
+import { registerShared } from 'src/shared/register-dependencies'
+import { registerModules } from 'src/modules/register-dependencies'
+import { registerApi } from 'src/api/register-dependencies'
 
 export const bottle = new Bottle()
 
-bottle.service('config', Config)
-bottle.service('sequelize', createSequelize, 'config')
-bottle.service('logger', loggerFactory, 'config')
-bottle.service('umzug', createUmzug, 'logger', 'sequelize')
-
-registerAuthModule(bottle)
+registerShared(bottle)
+registerModules(bottle)
+registerApi(bottle)

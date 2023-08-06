@@ -1,7 +1,7 @@
 import { MiddlewareHandler } from 'hono'
-import logger from '#logger'
+import { Logger } from '#logger'
 
-export function metrics(): MiddlewareHandler {
+export function metrics(logger: Logger): MiddlewareHandler {
   return async (c, next) => {
     const startTime = Date.now()
     await next()

@@ -1,4 +1,5 @@
 import { Duration } from 'luxon'
+import dotenv from 'dotenv'
 
 class JWTConfig {
   get secret(): string {
@@ -77,5 +78,9 @@ export class Config {
 
   get Firebase() {
     return new FirebaseConfig()
+  }
+
+  load() {
+    dotenv.config({ path: '.env' })
   }
 }

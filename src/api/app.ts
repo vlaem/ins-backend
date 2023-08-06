@@ -3,12 +3,16 @@ import { cors } from 'hono/cors'
 import { createV1Route } from './routes/v1'
 import { honoSwaggerUI } from 'hono-swagger-jsdoc'
 import { metrics } from './middlewares/metrics'
+import { Logger } from '#logger'
 
-export function createApp(V1Route: ReturnType<typeof createV1Route>) {
+export function createApp(
+  V1Route: ReturnType<typeof createV1Route>,
+  logger: Logger
+) {
   const app = new Hono()
 
   app.use('/*', cors())
-  app.use('/*', metrics())
+  app.use('/*', metrics(logger))
 
   app.get(
     '/api-docs',
