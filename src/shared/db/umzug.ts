@@ -1,12 +1,8 @@
-import { createSequelize } from './sq'
-import { DataTypes } from '@sequelize/core'
+import { DataTypes, Sequelize } from '@sequelize/core'
 import { Umzug, SequelizeStorage } from 'umzug'
 import { Logger } from '#logger'
 
-export function createUmzug(
-  logger: Logger,
-  sequelize: ReturnType<typeof createSequelize>
-) {
+export function createUmzug(logger: Logger, sequelize: Sequelize) {
   const umzug = new Umzug({
     migrations: {
       glob: 'src/shared/db/migrations/*.ts',

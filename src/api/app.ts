@@ -3,6 +3,7 @@ import { cors } from 'hono/cors'
 import { V1Route } from './routes/v1'
 import { honoSwaggerUI } from 'hono-swagger-jsdoc'
 import { MetricsMiddleware } from './middlewares'
+import { ExtendedHTTPException } from '#errors'
 
 export function createApp(V1Route: V1Route, metrics: MetricsMiddleware) {
   const app = new Hono()
@@ -20,6 +21,24 @@ export function createApp(V1Route: V1Route, metrics: MetricsMiddleware) {
   app.get('/', (c) => c.redirect('/api-docs'))
 
   app.route('/v1', V1Route)
+
+  app.onError((err, c) => {
+    if (err instanceof ExtendedHTTPException) {
+      return c.json(
+        {
+          errorCode: err.code,
+        },
+        err.status
+      )
+    } else {
+      return c.json(
+        {
+          message: 'An unexpected error occurred',
+        },
+        500
+      )
+    }
+  })
 
   return app
 }

@@ -11,7 +11,7 @@ export function createCurrentUserRoute(
 ) {
   const CurrentUserRoute = new Hono()
 
-  CurrentUserRoute.get('/current-user', authorize(), async (c) => {
+  CurrentUserRoute.get('/', authorize(), async (c) => {
     const userSession = getUserSession(c)
 
     const currentUser = await currentUserQueryService.getCurrentUser(
@@ -23,3 +23,5 @@ export function createCurrentUserRoute(
 
   return CurrentUserRoute
 }
+
+export type CurrentUserRoute = ReturnType<typeof createCurrentUserRoute>

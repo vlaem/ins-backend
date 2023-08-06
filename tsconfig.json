@@ -4,20 +4,16 @@
     "src/**/*.ts",
     "src/**/*.spec.ts",
     "tests/**/*.ts",
-    "tests/**/*.spec.ts",
-    "src/api/swagger/index.tsx",
-    "src/api/routes/v1/*.yaml"
+    "tests/**/*.spec.ts"
   ],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
       "#logger": ["src/shared/logging"],
       "#errors": ["src/shared/errors"],
-      "#db": ["src/shared/db"],
       "#dbmodels/*": ["src/shared/db/models/*"],
       "#config": ["src/shared/config"],
-      "#container": ["src/container"],
-      "src": ["src/*"]
+      "#container": ["src/container"]
     },
     "types": ["node", "jest"],
     "experimentalDecorators": true,

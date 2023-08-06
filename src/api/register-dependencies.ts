@@ -33,14 +33,16 @@ export function registerApi(bottle: Bottle) {
   bottle.service(
     'currentUserRoute',
     createCurrentUserRoute,
-    'Auth.CurrentUserQueryService'
+    'Auth.CurrentUserQueryService',
+    'authorizeMiddleware'
   )
   bottle.service(
     'V1Route',
     createV1Route,
     'healthRoute',
     'authRoute',
-    'inviteRoute'
+    'inviteRoute',
+    'currentUserRoute'
   )
 
   bottle.service('app', createApp, 'V1Route', 'metricsMiddleware')
