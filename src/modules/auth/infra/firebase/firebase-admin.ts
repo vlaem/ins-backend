@@ -30,10 +30,7 @@ export class FirebaseAdmin {
 
   async decodeToken(token: string) {
     if (!this.firebaseAdminApp) {
-      throw new InvalidOperationError(
-        'FIREBASE_ADMIN_NOT_SUPPORTED',
-        'This server does not currently support firebase operations.'
-      )
+      throw new InvalidOperationError('FIREBASE_ADMIN_NOT_SUPPORTED')
     }
 
     let decodedToken: DecodedIdToken
@@ -42,19 +39,13 @@ export class FirebaseAdmin {
       decodedToken = await this.firebaseAdminApp.auth().verifyIdToken(token)
     } catch (error: any) {
       this.logger.error(error)
-      throw new InvalidOperationError(
-        'INVALID_FIREBASE_TOKEN',
-        'The provided token is invalid.'
-      )
+      throw new InvalidOperationError('INVALID_FIREBASE_TOKEN')
     }
 
     this.logger.debug('Decoded Firebase Token', decodedToken)
 
     if (!decodedToken.uid || !decodedToken.email) {
-      throw new InvalidOperationError(
-        'INVALID_FIREBASE_TOKEN',
-        'The provided token is invalid.'
-      )
+      throw new InvalidOperationError('INVALID_FIREBASE_TOKEN')
     }
 
     return {

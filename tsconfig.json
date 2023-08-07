@@ -2,10 +2,6 @@
   "extends": "@tsconfig/node18/tsconfig.json",
   "include": [
     "src/**/*.ts",
-    "src/**/*.spec.ts",
-    "tests/**/*.ts",
-    "tests/**/*.spec.ts",
-    "tools/**/*.ts"
   ],
   "compilerOptions": {
     "baseUrl": ".",
@@ -18,6 +14,7 @@
     },
     "types": ["node", "jest"],
     "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./dist"
   }
 }
