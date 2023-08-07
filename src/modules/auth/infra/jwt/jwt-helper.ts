@@ -17,7 +17,8 @@ export class JwtHelper {
   encode(input: JwtPayload) {
     const now = DateTime.now()
     const iat = Math.trunc(now.toSeconds())
-    const exp = Math.trunc(now.plus(this.config.JWT.duration).toSeconds())
+    const expiresAt = now.plus(this.config.JWT.duration)
+    const exp = Math.trunc(expiresAt.toSeconds())
 
     const payload = {
       id: input.id,
@@ -27,7 +28,10 @@ export class JwtHelper {
     }
 
     const token = jwt.sign(payload, this.config.JWT.secret)
-    return token
+    return {
+      accessToken: token,
+      accessTokenExpiresAt: expiresAt,
+    }
   }
 
   decode(token: string): JwtPayload {

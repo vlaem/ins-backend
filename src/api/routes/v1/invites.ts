@@ -39,6 +39,7 @@ export function createInviteRoute(
       return c.json(
         {
           accessToken: payload.accessToken,
+          accessTokenExpiresAt: payload.accessTokenExpiresAt.toISO(),
         },
         200
       )

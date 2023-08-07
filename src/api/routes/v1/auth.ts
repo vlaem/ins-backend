@@ -26,6 +26,7 @@ export function createAuthRoute(authService: AuthService) {
       return c.json(
         {
           accessToken: payload.accessToken,
+          accessTokenExpiresAt: payload.accessTokenExpiresAt.toISO(),
         },
         200
       )
@@ -49,6 +50,7 @@ export function createAuthRoute(authService: AuthService) {
     return c.json(
       {
         accessToken: payload.accessToken,
+        accessTokenExpiresAt: payload.accessTokenExpiresAt.toISO(),
       },
       200
     )

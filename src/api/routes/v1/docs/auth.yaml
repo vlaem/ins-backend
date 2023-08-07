@@ -24,6 +24,10 @@
                 accessToken:
                   type: string
                   description: Access token
+                accessTokenExpiresAt:
+                  type: string
+                  format: date-time
+                  description: Access token expires at
 /v1/auth/refresh:
   post:
     tags:
@@ -50,6 +54,10 @@
                 accessToken:
                   type: string
                   description: Access token
+                accessTokenExpiresAt:
+                  type: string
+                  format: date-time
+                  description: Access token expires at                  
 /v1/auth/logout:
   post:
     tags:

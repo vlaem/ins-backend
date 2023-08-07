@@ -15,6 +15,7 @@ import { Logger } from '#logger'
 
 interface AuthTokenPayload {
   accessToken: string
+  accessTokenExpiresAt: DateTime
   refreshToken: string
 }
 interface UserData {
@@ -23,6 +24,7 @@ interface UserData {
 }
 interface UserTokenGroup {
   accessToken: string
+  accessTokenExpiresAt: DateTime
   userRefreshToken: UserRefreshToken
 }
 
@@ -59,7 +61,8 @@ export class AuthService {
    * @returns {UserTokenGroup}
    */
   private generateTokenAndRefresh(userData: UserData): UserTokenGroup {
-    const accessToken = this.jwtHelper.encode(userData)
+    const { accessToken, accessTokenExpiresAt } =
+      this.jwtHelper.encode(userData)
     const userRefreshToken = UserRefreshToken.create(
       userData.id,
       DateTime.now().plus({ days: 30 })
@@ -68,6 +71,7 @@ export class AuthService {
     return {
       accessToken,
       userRefreshToken,
+      accessTokenExpiresAt,
     }
   }
 
@@ -89,6 +93,7 @@ export class AuthService {
 
     return {
       accessToken: tokenGroup.accessToken,
+      accessTokenExpiresAt: tokenGroup.accessTokenExpiresAt,
       refreshToken: tokenGroup.userRefreshToken.id,
     }
   }
@@ -124,6 +129,7 @@ export class AuthService {
 
     return {
       accessToken: tokenGroup.accessToken,
+      accessTokenExpiresAt: tokenGroup.accessTokenExpiresAt,
       refreshToken: tokenGroup.userRefreshToken.id,
     }
   }
@@ -162,6 +168,7 @@ export class AuthService {
 
     return {
       accessToken: newTokenGroup.accessToken,
+      accessTokenExpiresAt: newTokenGroup.accessTokenExpiresAt,
       refreshToken: newTokenGroup.userRefreshToken.id,
     }
   }
@@ -212,6 +219,7 @@ export class AuthService {
 
     return {
       accessToken: newTokenGroup.accessToken,
+      accessTokenExpiresAt: newTokenGroup.accessTokenExpiresAt,
       refreshToken: newTokenGroup.userRefreshToken.id,
     }
   }
@@ -252,6 +260,7 @@ export class AuthService {
 
     return {
       accessToken: newTokenGroup.accessToken,
+      accessTokenExpiresAt: newTokenGroup.accessTokenExpiresAt,
       refreshToken: newTokenGroup.userRefreshToken.id,
     }
   }
