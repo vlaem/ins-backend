@@ -1,5 +1,6 @@
 import { AuthRoute, createAuthRoute } from './auth'
 import { AuthService } from 'src/modules/auth'
+import { DateTime } from 'luxon'
 import { mock } from 'jest-mock-extended'
 
 describe('AuthRoute', () => {
@@ -16,6 +17,7 @@ describe('AuthRoute', () => {
       mockedAuthService.firebaseLogin.mockResolvedValue({
         accessToken: 'unique-access-token',
         refreshToken: 'unique-refresh-token',
+        accessTokenExpiresAt: DateTime.fromISO('2021-01-01'),
       })
 
       const response = await AuthRoute.request('/login-with-firebase', {
@@ -30,6 +32,10 @@ describe('AuthRoute', () => {
       )
 
       expect(response.status).toBe(200)
+      expect(await response.json()).toEqual({
+        accessToken: 'unique-access-token',
+        accessTokenExpiresAt: '2021-01-01T00:00:00.000-05:00',
+      })
     })
   })
   describe('refresh', () => {
@@ -44,6 +50,7 @@ describe('AuthRoute', () => {
       mockedAuthService.refresh.mockResolvedValue({
         accessToken: 'unique-access-token',
         refreshToken: 'new-unqiue-refresh-token',
+        accessTokenExpiresAt: DateTime.fromISO('2021-01-01'),
       })
 
       const response = await AuthRoute.request('/refresh', {
@@ -57,6 +64,10 @@ describe('AuthRoute', () => {
         'refresh_token=new-unqiue-refresh-token; HttpOnly'
       )
       expect(response.status).toBe(200)
+      expect(await response.json()).toEqual({
+        accessToken: 'unique-access-token',
+        accessTokenExpiresAt: '2021-01-01T00:00:00.000-05:00',
+      })
     })
   })
 })

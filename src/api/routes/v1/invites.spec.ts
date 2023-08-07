@@ -1,5 +1,6 @@
 import { createInviteRoute, InviteRoute } from './invites'
 import { AuthService, InviteQueryService } from 'src/modules/auth'
+import { DateTime } from 'luxon'
 import { mock } from 'jest-mock-extended'
 
 describe('InvitesRoute', () => {
@@ -22,6 +23,7 @@ describe('InvitesRoute', () => {
       mockedAuthService.redeemInvitaWithFirebaseToken.mockResolvedValueOnce({
         accessToken: 'unique-access-token',
         refreshToken: 'unique-refresh-token',
+        accessTokenExpiresAt: DateTime.now(),
       })
 
       const response = await InvitesRoute.request(

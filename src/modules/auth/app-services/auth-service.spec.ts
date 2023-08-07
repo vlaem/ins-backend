@@ -11,6 +11,7 @@ import { UserRefreshToken, User, Invite } from 'src/modules/auth/domain/models'
 import { InvalidOperationError } from '#errors'
 import { mock } from 'jest-mock-extended'
 import { Logger } from '#logger'
+import { DateTime } from 'luxon'
 
 jest.mock('src/modules/auth/domain/models')
 const mockedUser = User as jest.Mocked<typeof User>
@@ -73,7 +74,10 @@ describe('authService', () => {
       const user = new (mockedUser as any).constructor()
       mockedUserRepository.findByEmail.mockResolvedValueOnce(user)
 
-      mockedJwtHelper.encode.mockReturnValueOnce('unique-access-token')
+      mockedJwtHelper.encode.mockReturnValueOnce({
+        accessToken: 'unique-access-token',
+        accessTokenExpiresAt: DateTime.fromISO('2021-01-01'),
+      })
 
       const newUserRefreshToken = new (
         mockedUserRefreshToken as any
@@ -90,6 +94,7 @@ describe('authService', () => {
       expect(result).toEqual({
         accessToken: 'unique-access-token',
         refreshToken: 'unique-refresh-token-id',
+        accessTokenExpiresAt: DateTime.fromISO('2021-01-01'),
       })
     })
   })
@@ -124,7 +129,10 @@ describe('authService', () => {
       const user = new (mockedUser as any).constructor()
       mockedUserRepository.findByPk.mockResolvedValueOnce(user)
 
-      mockedJwtHelper.encode.mockReturnValueOnce('unique-access-token')
+      mockedJwtHelper.encode.mockReturnValueOnce({
+        accessToken: 'unique-access-token',
+        accessTokenExpiresAt: DateTime.fromISO('2021-01-01'),
+      })
 
       const newUserRefreshToken = new (
         mockedUserRefreshToken as any
@@ -147,6 +155,7 @@ describe('authService', () => {
       expect(result).toEqual({
         accessToken: 'unique-access-token',
         refreshToken: 'unique-refresh-token-id',
+        accessTokenExpiresAt: DateTime.fromISO('2021-01-01'),
       })
     })
   })
@@ -223,7 +232,10 @@ describe('authService', () => {
       newUser.firebaseUid = 'firebase-uid'
 
       mockedUser.createWithFirebaseUid.mockReturnValueOnce(newUser)
-      mockedJwtHelper.encode.mockReturnValueOnce('unique-access-token')
+      mockedJwtHelper.encode.mockReturnValueOnce({
+        accessToken: 'unique-access-token',
+        accessTokenExpiresAt: DateTime.fromISO('2021-01-01'),
+      })
 
       const newUserRefreshToken = new (
         mockedUserRefreshToken as any
@@ -251,6 +263,7 @@ describe('authService', () => {
       expect(result).toEqual({
         accessToken: 'unique-access-token',
         refreshToken: 'unique-refresh-token-id',
+        accessTokenExpiresAt: DateTime.fromISO('2021-01-01'),
       })
     })
   })
