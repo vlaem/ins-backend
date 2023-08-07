@@ -1,8 +1,6 @@
 {
   "extends": "@tsconfig/node18/tsconfig.json",
-  "include": [
-    "src/**/*.ts",
-  ],
+  "include": ["src/**/*.ts", "test/**/*.ts", "tools/**/*.ts"],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
