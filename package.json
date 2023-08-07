@@ -10,6 +10,7 @@
     "prepare": "husky install",
     "dev": "tsx watch src/server.ts",
     "migrate": "tsx src/migrate.ts",
+    "migration-skeleton": "tsx tools/migration-skeleton.ts",
     "start": "tsx src/server.ts"
   },
   "dependencies": {
