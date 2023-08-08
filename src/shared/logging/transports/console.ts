@@ -1,5 +1,6 @@
 import stringify from 'safe-stable-stringify'
-import winston, { format } from 'winston'
+import * as winston from 'winston'
+import { format } from 'winston'
 import { getValidLogLevel } from './utils'
 
 const formatter = format.combine(

@@ -1,5 +1,5 @@
 import { Sequelize } from '@sequelize/core'
-import { Config } from 'src/shared/config'
+import { Config } from '~config'
 import { UserModel, InviteModel, UserRefreshTokenModel } from './models/auth'
 
 export function createSequelize(config: Config) {

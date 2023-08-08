@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { z } from 'zod'
 import { zValidator } from '@hono/zod-validator'
-import { AuthService, InviteQueryService } from 'src/modules/auth'
+import { AuthService, InviteQueryService } from '~/modules/auth'
 import { setCookie } from 'hono/cookie'
 
 export function createInviteRoute(

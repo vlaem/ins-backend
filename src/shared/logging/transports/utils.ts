@@ -1,4 +1,4 @@
-import winston from 'winston'
+import * as winston from 'winston'
 
 /**
  * Returns a valid winston log level.

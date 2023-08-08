@@ -4,11 +4,11 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "#logger": ["src/shared/logging"],
-      "#errors": ["src/shared/errors"],
-      "#dbmodels/*": ["src/shared/db/models/*"],
-      "#config": ["src/shared/config"],
-      "#container": ["src/container"]
+      "~errors": ["src/shared/errors"],
+      "~logger": ["src/shared/logging"],
+      "~config": ["src/shared/config"],
+      "~dbmodels/*": ["src/shared/db/models/*"],      
+      "~/*": ["src/*"]
     },
     "types": ["node", "jest"],
     "experimentalDecorators": true,

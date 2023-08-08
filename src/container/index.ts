@@ -1,7 +1,7 @@
 import Bottle from 'bottlejs'
-import { registerShared } from 'src/shared/register-dependencies'
-import { registerModules } from 'src/modules/register-dependencies'
-import { registerApi } from 'src/api/register-dependencies'
+import { registerShared } from '~/shared/register-dependencies'
+import { registerModules } from '~/modules/register-dependencies'
+import { registerApi } from '~/api/register-dependencies'
 
 export const bottle = new Bottle()
 

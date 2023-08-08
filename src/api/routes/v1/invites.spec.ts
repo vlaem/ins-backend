@@ -1,5 +1,5 @@
 import { createInviteRoute, InviteRoute } from './invites'
-import { AuthService, InviteQueryService } from 'src/modules/auth'
+import { AuthService, InviteQueryService } from '~/modules/auth'
 import { DateTime } from 'luxon'
 import { mock } from 'jest-mock-extended'
 

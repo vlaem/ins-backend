@@ -1,9 +1,9 @@
 import { Hono } from 'hono'
-import { CurrentUserQueryService } from 'src/modules/auth'
+import { CurrentUserQueryService } from '~/modules/auth'
 import {
   AuthorizeMiddleware,
   getUserSession,
-} from 'src/api/middlewares/authorize'
+} from '~/api/middlewares/authorize'
 
 export function createCurrentUserRoute(
   currentUserQueryService: CurrentUserQueryService,

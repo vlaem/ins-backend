@@ -1,6 +1,6 @@
-import { Config } from '#config'
-import { Logger } from '#logger'
-import { bottle } from '#container'
+import { Config } from '~config'
+import { Logger } from '~logger'
+import { bottle } from './container'
 import { Umzug } from 'umzug'
 
 const config = bottle.container.config as Config

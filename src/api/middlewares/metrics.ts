@@ -1,5 +1,5 @@
 import { MiddlewareHandler } from 'hono'
-import { Logger } from '#logger'
+import { Logger } from '~logger'
 
 export function createMetricsMiddleware(logger: Logger): MetricsMiddleware {
   return () => {

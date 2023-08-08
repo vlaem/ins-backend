@@ -1,19 +1,19 @@
-import { AuthService } from 'src/modules/auth'
+import { AuthService } from '~/modules/auth'
 import {
   JwtHelper,
   FirebaseAdmin,
   InviteRepository,
   UserRepository,
   UserRefreshTokenRepository,
-} from 'src/modules/auth/infra'
+} from '~/modules/auth/infra'
 import { Sequelize } from '@sequelize/core'
-import { UserRefreshToken, User, Invite } from 'src/modules/auth/domain/models'
-import { InvalidOperationError } from '#errors'
+import { UserRefreshToken, User, Invite } from '~/modules/auth/domain/models'
+import { InvalidOperationError } from '~errors'
 import { mock } from 'jest-mock-extended'
-import { Logger } from '#logger'
+import { Logger } from '~logger'
 import { DateTime } from 'luxon'
 
-jest.mock('src/modules/auth/domain/models')
+jest.mock('~/modules/auth/domain/models')
 const mockedUser = User as jest.Mocked<typeof User>
 const mockedUserRefreshToken = UserRefreshToken as jest.Mocked<
   typeof UserRefreshToken

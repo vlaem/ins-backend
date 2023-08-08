@@ -1,5 +1,5 @@
 import { MiddlewareHandler } from 'hono'
-import { AuthService } from 'src/modules/auth'
+import { AuthService } from '~/modules/auth'
 
 export function createAuthorizeMiddleware(
   authService: AuthService

@@ -3,7 +3,7 @@ import { cors } from 'hono/cors'
 import { V1Route } from './routes/v1'
 import { honoSwaggerUI } from 'hono-swagger-jsdoc'
 import { MetricsMiddleware } from './middlewares'
-import { ExtendedHTTPException } from '#errors'
+import { ExtendedHTTPException } from '~errors'
 
 export function createApp(V1Route: V1Route, metrics: MetricsMiddleware) {
   const app = new Hono()

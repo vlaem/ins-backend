@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { DateTime } from 'luxon'
-import { Config } from 'src/shared/config'
+import { Config } from '~config'
 
 export interface JwtPayload {
   id: string

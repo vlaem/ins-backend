@@ -1,5 +1,5 @@
 import { Logger } from './logger'
-import { Config } from 'src/shared/config'
+import { Config } from '~config'
 import { createConsoleTransport } from './transports'
 
 export function loggerFactory(config: Config) {

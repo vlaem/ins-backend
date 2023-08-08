@@ -1,5 +1,5 @@
 import { AuthRoute, createAuthRoute } from './auth'
-import { AuthService } from 'src/modules/auth'
+import { AuthService } from '~/modules/auth'
 import { DateTime } from 'luxon'
 import { mock } from 'jest-mock-extended'
 

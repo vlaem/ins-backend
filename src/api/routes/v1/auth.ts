@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { z } from 'zod'
 import { zValidator } from '@hono/zod-validator'
-import { AuthService } from 'src/modules/auth'
+import { AuthService } from '~/modules/auth'
 import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
 
 export function createAuthRoute(authService: AuthService) {

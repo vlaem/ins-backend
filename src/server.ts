@@ -1,7 +1,7 @@
-import { Config } from '#config'
-import { Logger } from '#logger'
-import { bottle } from '#container'
-import { createApp } from 'src/api/app'
+import { Config } from '~config'
+import { Logger } from '~logger'
+import { bottle } from './container'
+import { createApp } from '~/api/app'
 import { serve as honoNodeServe } from '@hono/node-server'
 
 const config = bottle.container.config as Config

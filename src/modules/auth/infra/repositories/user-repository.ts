@@ -1,5 +1,5 @@
-import { UserModel } from '#dbmodels/auth'
-import { User } from 'src/modules/auth/domain/models'
+import { UserModel } from '~dbmodels/auth'
+import { User } from '~/modules/auth/domain/models'
 import { FindOptions, InferAttributes } from '@sequelize/core'
 import { GenericRepository } from './generic-repository'
 

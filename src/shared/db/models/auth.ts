@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import CustomDataTypes from 'src/shared/db/custom-data-types'
+import CustomDataTypes from '~/shared/db/custom-data-types'
 import {
   DataTypes,
   Model,

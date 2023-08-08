@@ -1,5 +1,5 @@
-import { InviteRepository } from 'src/modules/auth/infra/repositories'
-import { ResourceNotFoundError } from 'src/shared/errors'
+import { InviteRepository } from '~/modules/auth/infra/repositories'
+import { ResourceNotFoundError } from '~errors'
 
 interface InviteView {
   id: string

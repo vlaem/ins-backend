@@ -1,5 +1,5 @@
-import { UserRepository } from 'src/modules/auth/infra/repositories'
-import { ResourceNotFoundError } from 'src/shared/errors'
+import { UserRepository } from '~/modules/auth/infra/repositories'
+import { ResourceNotFoundError } from '~errors'
 
 interface CurrentUserView {
   id: string

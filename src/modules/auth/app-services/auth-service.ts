@@ -8,10 +8,10 @@ import {
   InviteRepository,
   UserRepository,
   UserRefreshTokenRepository,
-} from 'src/modules/auth/infra'
-import { UserRefreshToken, User } from 'src/modules/auth/domain/models'
-import { InvalidOperationError, ResourceNotFoundError } from '#errors'
-import { Logger } from '#logger'
+} from '~/modules/auth/infra'
+import { UserRefreshToken, User } from '~/modules/auth/domain/models'
+import { InvalidOperationError, ResourceNotFoundError } from '~errors'
+import { Logger } from '~logger'
 
 interface AuthTokenPayload {
   accessToken: string
