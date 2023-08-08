@@ -20,7 +20,7 @@ WORKDIR /app
 COPY package.json ./package.json
 COPY yarn.lock ./yarn.lock
 
-RUN yarn install --production
+RUN yarn install --prod && yarn cache clean
 
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/open-api ./open-api
