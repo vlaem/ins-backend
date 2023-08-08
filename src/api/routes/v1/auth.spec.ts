@@ -1,7 +1,9 @@
 import { AuthRoute, createAuthRoute } from './auth'
 import { AuthService } from '~/modules/auth'
-import { DateTime } from 'luxon'
+import { DateTime, Settings as LuxonSettings } from 'luxon'
 import { mock } from 'jest-mock-extended'
+
+LuxonSettings.defaultZone = 'America/New_York'
 
 describe('AuthRoute', () => {
   let AuthRoute: AuthRoute
