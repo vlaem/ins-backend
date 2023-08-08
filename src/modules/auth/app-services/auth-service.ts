@@ -17,6 +17,7 @@ interface AuthTokenPayload {
   accessToken: string
   accessTokenExpiresAt: DateTime
   refreshToken: string
+  refreshTokenExpiresAt: DateTime
 }
 interface UserData {
   id: string
@@ -95,6 +96,7 @@ export class AuthService {
       accessToken: tokenGroup.accessToken,
       accessTokenExpiresAt: tokenGroup.accessTokenExpiresAt,
       refreshToken: tokenGroup.userRefreshToken.id,
+      refreshTokenExpiresAt: tokenGroup.userRefreshToken.expiresAt,
     }
   }
 
@@ -131,6 +133,7 @@ export class AuthService {
       accessToken: tokenGroup.accessToken,
       accessTokenExpiresAt: tokenGroup.accessTokenExpiresAt,
       refreshToken: tokenGroup.userRefreshToken.id,
+      refreshTokenExpiresAt: tokenGroup.userRefreshToken.expiresAt,
     }
   }
 
@@ -170,6 +173,7 @@ export class AuthService {
       accessToken: newTokenGroup.accessToken,
       accessTokenExpiresAt: newTokenGroup.accessTokenExpiresAt,
       refreshToken: newTokenGroup.userRefreshToken.id,
+      refreshTokenExpiresAt: newTokenGroup.userRefreshToken.expiresAt,
     }
   }
 
@@ -221,6 +225,7 @@ export class AuthService {
       accessToken: newTokenGroup.accessToken,
       accessTokenExpiresAt: newTokenGroup.accessTokenExpiresAt,
       refreshToken: newTokenGroup.userRefreshToken.id,
+      refreshTokenExpiresAt: newTokenGroup.userRefreshToken.expiresAt,
     }
   }
 
@@ -262,6 +267,7 @@ export class AuthService {
       accessToken: newTokenGroup.accessToken,
       accessTokenExpiresAt: newTokenGroup.accessTokenExpiresAt,
       refreshToken: newTokenGroup.userRefreshToken.id,
+      refreshTokenExpiresAt: newTokenGroup.userRefreshToken.expiresAt,
     }
   }
 

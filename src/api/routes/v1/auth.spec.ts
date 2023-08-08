@@ -20,6 +20,7 @@ describe('AuthRoute', () => {
         accessToken: 'unique-access-token',
         refreshToken: 'unique-refresh-token',
         accessTokenExpiresAt: DateTime.fromISO('2021-01-01'),
+        refreshTokenExpiresAt: DateTime.fromISO('2021-01-01'),
       })
 
       const response = await AuthRoute.request('/login-with-firebase', {
@@ -30,7 +31,7 @@ describe('AuthRoute', () => {
       })
 
       expect(response.headers.get('Set-Cookie')).toBe(
-        'refresh_token=unique-refresh-token; HttpOnly'
+        'refresh_token=unique-refresh-token; Expires=Fri, 01 Jan 2021 05:00:00 GMT; HttpOnly'
       )
 
       expect(response.status).toBe(200)
@@ -53,6 +54,7 @@ describe('AuthRoute', () => {
         accessToken: 'unique-access-token',
         refreshToken: 'new-unqiue-refresh-token',
         accessTokenExpiresAt: DateTime.fromISO('2021-01-01'),
+        refreshTokenExpiresAt: DateTime.fromISO('2021-01-01'),
       })
 
       const response = await AuthRoute.request('/refresh', {
@@ -63,7 +65,7 @@ describe('AuthRoute', () => {
       })
 
       expect(response.headers.get('Set-Cookie')).toBe(
-        'refresh_token=new-unqiue-refresh-token; HttpOnly'
+        'refresh_token=new-unqiue-refresh-token; Expires=Fri, 01 Jan 2021 05:00:00 GMT; HttpOnly'
       )
       expect(response.status).toBe(200)
       expect(await response.json()).toEqual({
