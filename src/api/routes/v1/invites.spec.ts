@@ -1,7 +1,9 @@
 import { createInviteRoute, InviteRoute } from './invites'
 import { AuthService, InviteQueryService } from '~/modules/auth'
-import { DateTime } from 'luxon'
+import { DateTime, Settings as LuxonSettings } from 'luxon'
 import { mock } from 'jest-mock-extended'
+
+LuxonSettings.defaultZone = 'America/New_York'
 
 describe('InvitesRoute', () => {
   let InvitesRoute: InviteRoute
@@ -24,6 +26,7 @@ describe('InvitesRoute', () => {
         accessToken: 'unique-access-token',
         refreshToken: 'unique-refresh-token',
         accessTokenExpiresAt: DateTime.now(),
+        refreshTokenExpiresAt: DateTime.now(),
       })
 
       const response = await InvitesRoute.request(

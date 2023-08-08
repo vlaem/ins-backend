@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint --ext .ts src",
     "lint-staged": "lint-staged",
-    "typecheck": "tsc -p tsconfig.dev.json --noEmit",
+    "typecheck": "tsc --noEmit",
     "test:unit": "jest",
     "prepare": "husky install",
     "dev": "tsx watch src/server.ts",
