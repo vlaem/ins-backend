@@ -12,7 +12,7 @@
     "dev": "tsx watch src/server.ts",
     "migrate": "tsx src/migrate.ts",
     "migration-skeleton": "tsx tools/migration-skeleton.ts",
-    "start": "tsx src/server.ts"
+    "build": "pkgroll --sourcefile"
   },
   "imports": {
     "~errors": "./src/shared/errors/index.ts",

@@ -38,7 +38,7 @@ export function createV1Route(
           },
         },
       },
-      apis: ['./src/api/routes/v1/**/*.ts', './src/api/routes/v1/**/*.yaml'],
+      apis: ['./open-api/v1/**/*.yaml'],
     })
   )
 
