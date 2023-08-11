@@ -25,7 +25,7 @@ RUN yarn install --prod && yarn cache clean
 
 COPY --from=build /app/dist ./dist
 
-EXPOSE 3000
+EXPOSE 80
 
 CMD ["node", "dist/server.js"]
 

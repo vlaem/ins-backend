@@ -18,7 +18,7 @@ class DatabaseConfig {
 
 class ServerConfig {
   get port(): number {
-    return Number.parseInt(process.env.PORT || '3000')
+    return Number.parseInt(process.env.PORT || '80')
   }
 }
 
