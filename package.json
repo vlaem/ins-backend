@@ -12,7 +12,7 @@
     "dev": "tsx watch src/server.ts",
     "migrate": "tsx src/migrate.ts",
     "migration-skeleton": "tsx tools/migration-skeleton.ts",
-    "build": "pkgroll --sourcefile  --env.NODE_ENV=production"
+    "build": "pkgroll --sourcefile  --env.NODE_ENV=production && tsc --project tsconfig.build.json && tsx tools/move-api-docs.ts"
   },
   "exports": {
     ".": "./dist/server.js",

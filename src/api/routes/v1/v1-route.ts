@@ -18,6 +18,11 @@ export function createV1Route(
   V1Route.route('/invites', inviteRoute)
   V1Route.route('/current-user', currentUserRoute)
 
+  let apis: string[]
+
+  if (process.env.NODE_ENV === 'production') apis = ['./dist/docs/v1/**/*.yaml']
+  else apis = ['./src/api/routes/v1/docs/**/*.yaml']
+
   V1Route.get(
     '/swagger.json',
     honoSwaggerJsdoc({
@@ -38,7 +43,7 @@ export function createV1Route(
           },
         },
       },
-      apis: ['./open-api/v1/**/*.yaml'],
+      apis,
     })
   )
 

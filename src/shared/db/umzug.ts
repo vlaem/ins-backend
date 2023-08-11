@@ -3,9 +3,14 @@ import { Umzug, SequelizeStorage } from 'umzug'
 import { Logger } from '~logger'
 
 export function createUmzug(logger: Logger, sequelize: Sequelize) {
+  let glob: string
+
+  if (process.env.NODE_ENV === 'production') glob = 'dist/migrations/*.js'
+  else glob = 'src/shared/db/migrations/*.ts'
+
   const umzug = new Umzug({
     migrations: {
-      glob: 'src/shared/db/migrations/*.ts',
+      glob: glob,
       resolve: (params) => {
         if (!params.path) {
           throw new Error("Migration path doesn't exist")
@@ -14,7 +19,7 @@ export function createUmzug(logger: Logger, sequelize: Sequelize) {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const migration = require(params.path)
         return {
-          name: params.name,
+          name: params.name.replace(/\.ts$/, '').replace(/\.js$/, ''),
           up: async () => migration.up(params.context, sequelize.Sequelize),
           down: async () => migration.down(params.context, sequelize.Sequelize),
         }

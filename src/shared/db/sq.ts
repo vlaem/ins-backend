@@ -1,10 +1,13 @@
 import { Sequelize } from '@sequelize/core'
 import { Config } from '~config'
-import { UserModel, InviteModel, UserRefreshTokenModel } from './models/auth'
+import { init } from './models/auth'
 
 export function createSequelize(config: Config) {
-  return new Sequelize(config.Database.url, {
-    models: [UserModel, InviteModel, UserRefreshTokenModel],
+  const sequelize = new Sequelize(config.Database.url, {
     logging: false,
   })
+
+  init(sequelize)
+
+  return sequelize
 }

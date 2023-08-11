@@ -6,7 +6,7 @@ import {
 import assert from 'assert'
 import { DateTime as LuxonDateTime } from 'luxon'
 
-export class DateTime extends DataTypes.ABSTRACT<LuxonDateTime> {
+export class DATETIME extends DataTypes.ABSTRACT<LuxonDateTime> {
   toSql() {
     return 'TIMESTAMP WITH TIME ZONE'
   }

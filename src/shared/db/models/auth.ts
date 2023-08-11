@@ -5,98 +5,119 @@ import {
   Model,
   InferAttributes,
   InferCreationAttributes,
-  NonAttribute,
+  ForeignKey,
+  Sequelize,
 } from '@sequelize/core'
-import {
-  Attribute,
-  PrimaryKey,
-  NotNull,
-  Table,
-  BelongsTo,
-  Unique,
-} from '@sequelize/core/decorators-legacy'
 
-@Table({
-  schema: 'auth',
-  underscored: true,
-  tableName: 'users',
-  timestamps: false,
-})
-export class UserModel extends Model<
-  InferAttributes<UserModel>,
-  InferCreationAttributes<UserModel>
+export class User extends Model<
+  InferAttributes<User>,
+  InferCreationAttributes<User>
 > {
-  @Attribute(DataTypes.UUIDV4)
-  @PrimaryKey
   declare id: string
-
-  @Attribute(DataTypes.STRING)
-  @NotNull
-  @Unique
   declare email: string
-
-  @Attribute(DataTypes.STRING)
-  @NotNull
   declare password: string
-
-  @Attribute(CustomDataTypes.DateTime)
-  @NotNull
   declare createdAt: DateTime
-
-  @Attribute(CustomDataTypes.DateTime)
-  @NotNull
   declare updatedAt: DateTime
 }
-
-@Table({
-  schema: 'auth',
-  underscored: true,
-  tableName: 'user_refresh_tokens',
-  timestamps: false,
-})
-export class UserRefreshTokenModel extends Model<
-  InferAttributes<UserRefreshTokenModel>,
-  InferCreationAttributes<UserRefreshTokenModel>
+export class UserRefreshToken extends Model<
+  InferAttributes<UserRefreshToken>,
+  InferCreationAttributes<UserRefreshToken>
 > {
-  @Attribute(DataTypes.STRING)
-  @PrimaryKey
   declare id: string
-
-  @Attribute(DataTypes.UUIDV4)
-  @NotNull
-  declare userId: string
-
-  @BelongsTo(() => UserModel, 'userId')
-  declare user: NonAttribute<UserModel>
-
-  @Attribute(CustomDataTypes.DateTime)
-  @NotNull
+  declare userId: ForeignKey<string>
   declare expiresAt: DateTime
-
-  @Attribute(CustomDataTypes.DateTime)
-  @NotNull
   declare createdAt: DateTime
 }
 
-@Table({
-  schema: 'auth',
-  underscored: true,
-  tableName: 'link_invites',
-  timestamps: false,
-})
-export class InviteModel extends Model<
-  InferAttributes<InviteModel>,
-  InferCreationAttributes<InviteModel>
+export class Invite extends Model<
+  InferAttributes<Invite>,
+  InferCreationAttributes<Invite>
 > {
-  @Attribute(DataTypes.STRING)
-  @PrimaryKey
   declare id: string
-
-  @Attribute(CustomDataTypes.DateTime)
-  @NotNull
   declare expiresAt: DateTime
-
-  @Attribute(CustomDataTypes.DateTime)
-  @NotNull
   declare createdAt: DateTime
+}
+
+export function init(sequelize: Sequelize) {
+  User.init(
+    {
+      id: {
+        type: DataTypes.UUID,
+        primaryKey: true,
+      },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      createdAt: {
+        type: CustomDataTypes.DATETIME,
+        allowNull: false,
+      },
+    },
+    {
+      sequelize,
+      timestamps: false,
+      underscored: true,
+      schema: 'auth',
+    }
+  )
+
+  UserRefreshToken.init(
+    {
+      id: {
+        type: DataTypes.UUID,
+        primaryKey: true,
+      },
+      userId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+      },
+      expiresAt: {
+        type: CustomDataTypes.DATETIME,
+        allowNull: false,
+      },
+      createdAt: {
+        type: CustomDataTypes.DATETIME,
+        allowNull: false,
+      },
+    },
+    {
+      sequelize,
+      timestamps: false,
+      underscored: true,
+      schema: 'auth',
+    }
+  )
+
+  Invite.init(
+    {
+      id: {
+        type: DataTypes.UUID,
+        primaryKey: true,
+      },
+      expiresAt: {
+        type: CustomDataTypes.DATETIME,
+        allowNull: false,
+      },
+      createdAt: {
+        type: CustomDataTypes.DATETIME,
+        allowNull: false,
+      },
+    },
+    {
+      sequelize,
+      timestamps: false,
+      underscored: true,
+      schema: 'auth',
+    }
+  )
+
+  User.hasMany(UserRefreshToken, {
+    foreignKey: 'userId',
+  })
 }
