@@ -8,8 +8,9 @@ COPY yarn.lock ./yarn.lock
 RUN yarn install
 
 COPY tsconfig.json ./tsconfig.json
+COPY tsconfig.build.json ./tsconfig.build.json
 COPY ./src ./src
-COPY ./open-api ./open-api
+COPY ./tools ./tools
 
 RUN yarn build
 
@@ -23,7 +24,6 @@ COPY yarn.lock ./yarn.lock
 RUN yarn install --prod && yarn cache clean
 
 COPY --from=build /app/dist ./dist
-COPY --from=build /app/open-api ./open-api
 
 EXPOSE 3000
 
