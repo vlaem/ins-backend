@@ -1,0 +1,1 @@
+release: node dist/migrate.js

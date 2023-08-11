@@ -5,8 +5,6 @@ import { createApp } from '~/api/app'
 import { serve as honoNodeServe } from '@hono/node-server'
 
 const config = bottle.container.config as Config
-config.load()
-
 const logger = bottle.container.logger as Logger
 const app = bottle.container.app as ReturnType<typeof createApp>
 

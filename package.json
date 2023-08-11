@@ -12,7 +12,11 @@
     "dev": "tsx watch src/server.ts",
     "migrate": "tsx src/migrate.ts",
     "migration-skeleton": "tsx tools/migration-skeleton.ts",
-    "build": "pkgroll --sourcefile"
+    "build": "pkgroll --sourcefile  --env.NODE_ENV=production"
+  },
+  "exports": {
+    ".": "./dist/server.js",
+    "./migrate": "./dist/migrate.js"
   },
   "imports": {
     "~errors": "./src/shared/errors/index.ts",
