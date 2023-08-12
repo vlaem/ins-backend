@@ -37,6 +37,7 @@ export function createApp(
         err.status
       )
     } else {
+      logger.error(err)
       return c.json(
         {
           message: 'An unexpected error occurred',
