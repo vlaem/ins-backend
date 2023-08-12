@@ -9,8 +9,9 @@ RUN yarn install
 
 COPY tsconfig.json ./tsconfig.json
 COPY tsconfig.build.json ./tsconfig.build.json
+COPY gulpfile.js ./gulpfile.js
+COPY ./scripts ./scripts
 COPY ./src ./src
-COPY ./tools ./tools
 
 RUN yarn build
 
