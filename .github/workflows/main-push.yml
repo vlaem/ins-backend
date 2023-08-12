@@ -49,3 +49,15 @@ jobs:
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+  deploy:
+    needs: build-docker-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Deploy to dokku
+        uses: dokku/github-action@master
+        with:
+          git_remote_url: dokku@${{ secrets.DOKKU_HOST }}:ins-backend
+          deploy_docker_image: ghcr.io/${{ github.repository_owner }}/ins-backend:${{ github.sha }}
+          ssh_private_key: ${{ secrets.DOKKU_SSH_KEY }}

@@ -70,7 +70,7 @@ export function init(sequelize: Sequelize) {
   UserRefreshToken.init(
     {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.STRING,
         primaryKey: true,
       },
       userId: {
@@ -97,7 +97,7 @@ export function init(sequelize: Sequelize) {
   Invite.init(
     {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.STRING,
         primaryKey: true,
       },
       expiresAt: {

@@ -53,7 +53,7 @@ export function up(queryInterface: AbstractQueryInterface) {
     await queryInterface.createTable(
       {
         schema: 'auth',
-        tableName: 'link_invites',
+        tableName: 'invites',
       },
       {
         id: {
@@ -72,11 +72,11 @@ export function down(queryInterface: AbstractQueryInterface) {
     await queryInterface.dropTable({ schema: 'auth', tableName: 'users' })
     await queryInterface.dropTable({
       schema: 'auth',
-      tableName: 'user-refresh-tokens',
+      tableName: 'user_refresh_tokens',
     })
     await queryInterface.dropTable({
       schema: 'auth',
-      tableName: 'link-invites',
+      tableName: 'invites',
     })
 
     await queryInterface.dropSchema('auth')

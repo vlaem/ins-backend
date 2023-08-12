@@ -45,5 +45,5 @@ export function registerApi(bottle: Bottle) {
     'currentUserRoute'
   )
 
-  bottle.service('app', createApp, 'V1Route', 'metricsMiddleware')
+  bottle.service('app', createApp, 'V1Route', 'metricsMiddleware', 'logger')
 }
