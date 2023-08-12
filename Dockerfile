@@ -21,6 +21,7 @@ WORKDIR /app
 COPY package.json ./package.json
 COPY yarn.lock ./yarn.lock
 COPY Procfile ./Procfile
+COPY CHECKS ./CHECKS
 
 RUN yarn install --prod && yarn cache clean
 
