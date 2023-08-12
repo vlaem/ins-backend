@@ -5,8 +5,7 @@ on:
       - main
     paths-ignore:
       - '*.md'
-      - '.gitignore'
-      - '.github/**'
+      - '.gitignore'      
 concurrency:
   group: main-push
 jobs:
