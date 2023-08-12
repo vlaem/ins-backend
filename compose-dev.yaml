@@ -1,22 +1,18 @@
 services:
   app:
     entrypoint:
-    - sleep
-    - infinity
+      - sleep
+      - infinity
     image: docker/dev-environments-javascript:stable-1
     init: true
     volumes:
-    - type: bind
-      source: /var/run/docker.sock
-      target: /var/run/docker.sock
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
   postgres:
     image: postgres:15-alpine
     ports:
-    - 5432:5432
-    volumes:
-    - type: volume
-      source: postgres-data
-      target: /var/lib/postgresql/data
+      - 5432:5432
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
