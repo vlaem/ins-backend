@@ -4,8 +4,13 @@ import { V1Route } from './routes/v1'
 import { honoSwaggerUI } from 'hono-swagger-jsdoc'
 import { MetricsMiddleware } from './middlewares'
 import { ExtendedHTTPException } from '~errors'
+import { Logger } from '~logger'
 
-export function createApp(V1Route: V1Route, metrics: MetricsMiddleware) {
+export function createApp(
+  V1Route: V1Route,
+  metrics: MetricsMiddleware,
+  logger: Logger
+) {
   const app = new Hono()
 
   app.use('/*', cors())
@@ -24,6 +29,7 @@ export function createApp(V1Route: V1Route, metrics: MetricsMiddleware) {
 
   app.onError((err, c) => {
     if (err instanceof ExtendedHTTPException) {
+      if (err.status === 500) logger.error(err)
       return c.json(
         {
           errorCode: err.code,
