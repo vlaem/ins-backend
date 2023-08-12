@@ -8,7 +8,7 @@ COPY yarn.lock ./yarn.lock
 RUN yarn install
 
 COPY tsconfig.json ./tsconfig.json
-COPY tsconfig.build.json ./tsconfig.build.json
+COPY tsconfig.migrations.json ./tsconfig.migrations.json
 COPY gulpfile.js ./gulpfile.js
 COPY ./scripts ./scripts
 COPY ./src ./src
