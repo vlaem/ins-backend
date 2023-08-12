@@ -58,6 +58,6 @@ jobs:
       - name: Deploy to dokku
         uses: dokku/github-action@master
         with:
-          git_remote_url: dokku@${{ secrets.DOKKU_HOST }}:ins-backend
+          git_remote_url: dokku@${{ secrets.DOKKU_HOST }}:22/ins-backend
           deploy_docker_image: ghcr.io/${{ github.repository_owner }}/ins-backend:${{ github.sha }}
           ssh_private_key: ${{ secrets.DOKKU_SSH_KEY }}
