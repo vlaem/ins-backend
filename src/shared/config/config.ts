@@ -57,9 +57,9 @@ class FirebaseConfig {
 
 export class Config {
   constructor() {
-    //if (process.env.NODE_ENV === 'development') {
-    dotenv.config({ path: '.env' })
-    //}
+    if (process.env.NODE_ENV !== 'test') {
+      dotenv.config({ path: '.env' })
+    }
   }
 
   get AppEnv(): string {
