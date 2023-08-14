@@ -144,6 +144,10 @@ export class AuthService {
    * @returns
    */
   async refresh(refreshToken: string): Promise<AuthTokenPayload> {
+    this.logger.debug('AuthService.refresh', {
+      refreshToken,
+    })
+
     const existingUserRefreshToken =
       await this.userRefreshTokenRepository.findOneNonExpiredById(refreshToken)
 

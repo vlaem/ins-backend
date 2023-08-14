@@ -22,6 +22,7 @@ export function createAuthRoute(authService: AuthService) {
       setCookie(c, 'refresh_token', payload.refreshToken, {
         httpOnly: true,
         expires: payload.refreshTokenExpiresAt.toJSDate(),
+        path: '/',
       })
 
       return c.json(
@@ -47,6 +48,7 @@ export function createAuthRoute(authService: AuthService) {
     setCookie(c, 'refresh_token', payload.refreshToken, {
       httpOnly: true,
       expires: payload.refreshTokenExpiresAt.toJSDate(),
+      path: '/',
     })
 
     return c.json(

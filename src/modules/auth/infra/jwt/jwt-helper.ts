@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 import { DateTime } from 'luxon'
 import { Config } from '~config'
+import { UnauthorizedError } from '~errors'
 
 export interface JwtPayload {
   id: string
@@ -35,7 +36,15 @@ export class JwtHelper {
   }
 
   decode(token: string): JwtPayload {
-    const payload = jwt.verify(token, this.config.JWT.secret) as JwtPayload
-    return payload
+    try {
+      const payload = jwt.verify(token, this.config.JWT.secret) as JwtPayload
+      return payload
+    } catch (e) {
+      if (e instanceof jwt.TokenExpiredError) {
+        throw new UnauthorizedError()
+      } else {
+        throw e
+      }
+    }
   }
 }

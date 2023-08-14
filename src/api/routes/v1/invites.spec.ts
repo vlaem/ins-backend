@@ -25,8 +25,8 @@ describe('InvitesRoute', () => {
       mockedAuthService.redeemInvitaWithFirebaseToken.mockResolvedValueOnce({
         accessToken: 'unique-access-token',
         refreshToken: 'unique-refresh-token',
-        accessTokenExpiresAt: DateTime.now(),
-        refreshTokenExpiresAt: DateTime.now(),
+        accessTokenExpiresAt: DateTime.fromISO('2021-01-01'),
+        refreshTokenExpiresAt: DateTime.fromISO('2021-01-01'),
       })
 
       const response = await InvitesRoute.request(
@@ -40,7 +40,7 @@ describe('InvitesRoute', () => {
       )
 
       expect(response.headers.get('Set-Cookie')).toBe(
-        'refresh_token=unique-refresh-token; HttpOnly'
+        'refresh_token=unique-refresh-token; Path=/; Expires=Fri, 01 Jan 2021 05:00:00 GMT; HttpOnly'
       )
 
       expect(response.status).toBe(200)

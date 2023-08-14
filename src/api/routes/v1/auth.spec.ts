@@ -31,7 +31,7 @@ describe('AuthRoute', () => {
       })
 
       expect(response.headers.get('Set-Cookie')).toBe(
-        'refresh_token=unique-refresh-token; Expires=Fri, 01 Jan 2021 05:00:00 GMT; HttpOnly'
+        'refresh_token=unique-refresh-token; Path=/; Expires=Fri, 01 Jan 2021 05:00:00 GMT; HttpOnly'
       )
 
       expect(response.status).toBe(200)
@@ -65,7 +65,7 @@ describe('AuthRoute', () => {
       })
 
       expect(response.headers.get('Set-Cookie')).toBe(
-        'refresh_token=new-unqiue-refresh-token; Expires=Fri, 01 Jan 2021 05:00:00 GMT; HttpOnly'
+        'refresh_token=new-unqiue-refresh-token; Path=/; Expires=Fri, 01 Jan 2021 05:00:00 GMT; HttpOnly'
       )
       expect(response.status).toBe(200)
       expect(await response.json()).toEqual({
