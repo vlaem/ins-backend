@@ -2,9 +2,3 @@
 . "$(dirname "$0")/_/husky.sh"
 
 npx lint-staged
-
-branch=$(git rev-parse --symbolic --abbrev-ref $refname)
-
-if [ "main" == "$branch" ]; then
-  yarn test:unit
-fi
