@@ -1,17 +1,8 @@
 import * as winston from 'winston'
+import * as LoggerConfig from '~config/logger-config'
+import { createConsoleTransport } from './transports/console'
 
-winston.addColors({
-  emerg: 'red',
-  alert: 'red',
-  crit: 'red',
-  error: 'red',
-  warning: 'yellow',
-  notice: 'magenta',
-  info: 'green',
-  debug: 'blue',
-})
-
-export class Logger {
+class Logger {
   protected winstonLogger: winston.Logger
 
   constructor(
@@ -81,3 +72,23 @@ export class Logger {
     this.winstonLogger.debug(message, ...meta)
   }
 }
+
+winston.addColors({
+  emerg: 'red',
+  alert: 'red',
+  crit: 'red',
+  error: 'red',
+  warning: 'yellow',
+  notice: 'magenta',
+  info: 'green',
+  debug: 'blue',
+})
+
+const consoleTransport = createConsoleTransport({
+  level: LoggerConfig.getConsoleLevel(),
+  silent: LoggerConfig.isConsoleSilent(),
+})
+
+const transports = [consoleTransport]
+
+export const logger = new Logger(transports)

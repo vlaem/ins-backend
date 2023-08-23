@@ -1,13 +1,9 @@
 import { Sequelize } from '@sequelize/core'
-import { Config } from '~config'
+import { getUrl } from '~config/database-config'
 import { init } from './models/auth'
 
-export function createSequelize(config: Config) {
-  const sequelize = new Sequelize(config.Database.url, {
-    logging: false,
-  })
+export const sequelize = new Sequelize(getUrl(), {
+  logging: false,
+})
 
-  init(sequelize)
-
-  return sequelize
-}
+init(sequelize)

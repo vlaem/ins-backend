@@ -1,56 +1,62 @@
-import { Logger } from '~logger'
-import { Config } from '~config'
-import { app as FirebaseApp } from 'firebase-admin'
+import * as FirebaseConfig from '~config/firebase-config'
 import { InvalidOperationError } from '~errors'
-import { DecodedIdToken } from 'firebase-admin/auth'
 import admin from 'firebase-admin'
 import { cert } from 'firebase-admin/app'
+import * as TE from 'fp-ts/TaskEither'
+import { pipe } from 'fp-ts/function'
 
-export class FirebaseAdmin {
-  private firebaseAdminApp: FirebaseApp.App | undefined
-  private logger: Logger
-  constructor(logger: Logger, config: Config) {
-    this.logger = logger
+class FirebaseAdminAppSingleton {
+  private static instance: FirebaseAdminAppSingleton
 
-    if (
-      config.Firebase.projectId &&
-      config.Firebase.clientEmail &&
-      config.Firebase.privateKey
-    ) {
-      this.firebaseAdminApp = admin.initializeApp({
-        credential: cert({
-          projectId: config.Firebase.projectId,
-          clientEmail: config.Firebase.clientEmail,
-          privateKey: config.Firebase.privateKey,
-        }),
-        projectId: config.Firebase.projectId,
-      })
-    }
+  private constructor() {
+    this._app = admin.initializeApp({
+      credential: cert({
+        projectId: FirebaseConfig.getProjectId(),
+        clientEmail: FirebaseConfig.getClientEmail(),
+        privateKey: FirebaseConfig.getPrivateKey(),
+      }),
+      projectId: FirebaseConfig.getProjectId(),
+    })
   }
-
-  async decodeToken(token: string) {
-    if (!this.firebaseAdminApp) {
-      throw new InvalidOperationError('FIREBASE_ADMIN_NOT_SUPPORTED')
+  public static getInstance(): FirebaseAdminAppSingleton {
+    if (!FirebaseAdminAppSingleton.instance) {
+      FirebaseAdminAppSingleton.instance = new FirebaseAdminAppSingleton()
     }
+    return FirebaseAdminAppSingleton.instance
+  }
+  private _app: admin.app.App
 
-    let decodedToken: DecodedIdToken
-
-    try {
-      decodedToken = await this.firebaseAdminApp.auth().verifyIdToken(token)
-    } catch (error: any) {
-      this.logger.error(error)
-      throw new InvalidOperationError('INVALID_FIREBASE_TOKEN')
-    }
-
-    this.logger.debug('Decoded Firebase Token', decodedToken)
-
-    if (!decodedToken.uid || !decodedToken.email) {
-      throw new InvalidOperationError('INVALID_FIREBASE_TOKEN')
-    }
-
-    return {
-      uid: decodedToken.uid,
-      email: decodedToken.email,
-    }
+  public get app(): admin.app.App {
+    return this._app
   }
 }
+
+export interface FirebaseDecodedUserData {
+  uid: string
+  email: string
+}
+
+const verifyIdToken = (idToken: string) =>
+  TE.tryCatch(
+    () =>
+      FirebaseAdminAppSingleton.getInstance().app.auth().verifyIdToken(idToken),
+    () => InvalidOperationError.of('INVALID_FIREBASE_TOKEN')
+  )
+
+const toFirebaseDecodedUserData = (
+  x: admin.auth.DecodedIdToken
+): FirebaseDecodedUserData => ({
+  uid: x.uid,
+  email: x.email as string,
+})
+
+export const decodeFirebaseToken = (idToken: string) =>
+  pipe(
+    idToken,
+    verifyIdToken,
+    TE.flatMap((x) =>
+      x.email
+        ? TE.right(toFirebaseDecodedUserData(x))
+        : TE.left(InvalidOperationError.of('INVALID_FIREBASE_TOKEN'))
+    )
+  )

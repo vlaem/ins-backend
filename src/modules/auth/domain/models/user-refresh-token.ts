@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon'
 import uidSafe from 'uid-safe'
+import { Task } from 'fp-ts/Task'
 
 interface UserRefreshTokenData {
   id: string
@@ -9,15 +10,30 @@ interface UserRefreshTokenData {
 }
 
 export class UserRefreshToken {
-  static create(userId: string, expiresAt: DateTime): UserRefreshToken {
-    const token = new UserRefreshToken()
+  static create(userId: string): Task<UserRefreshToken> {
+    return async () => {
+      const token = new UserRefreshToken()
 
-    token._id = uidSafe.sync(32)
-    token._userId = userId
-    token._expiresAt = expiresAt
-    token._createdAt = DateTime.now()
+      token._id = await uidSafe(32)
+      token._userId = userId
+      token._expiresAt = DateTime.now().plus({ days: 30 })
+      token._createdAt = DateTime.now()
 
-    return token
+      return token
+    }
+  }
+
+  static extendFrom(token: UserRefreshToken): Task<UserRefreshToken> {
+    return async () => {
+      const newToken = new UserRefreshToken()
+
+      newToken._id = await uidSafe(32)
+      newToken._userId = token.userId
+      newToken._expiresAt = DateTime.now().plus({ days: 30 })
+      newToken._createdAt = DateTime.now()
+
+      return newToken
+    }
   }
 
   static load(data: UserRefreshTokenData): UserRefreshToken {

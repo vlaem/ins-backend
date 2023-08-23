@@ -1,3 +1,4 @@
+
 import { InviteRepository } from '~/modules/auth/infra/repositories'
 import { ResourceNotFoundError } from '~errors'
 

@@ -1,17 +1,14 @@
-import { Config } from '~config'
-import { Logger } from '~logger'
-import { bottle } from './container'
+import '~config/load'
+import './shared/db/sq'
+import { getPort } from '~config/server-config'
+import { logger } from '~logger'
 import { createApp } from '~/api/app'
 import { serve as honoNodeServe } from '@hono/node-server'
 
-const config = bottle.container.config as Config
-const logger = bottle.container.logger as Logger
-const app = bottle.container.app as ReturnType<typeof createApp>
-
 honoNodeServe(
   {
-    fetch: app.fetch,
-    port: config.Server.port,
+    fetch: createApp().fetch,
+    port: getPort(),
   },
   (info) => {
     logger.info(`Listening on http://localhost:${info.port}`)

@@ -1,40 +1,60 @@
 import { Hono } from 'hono'
 import { z } from 'zod'
 import { zValidator } from '@hono/zod-validator'
-import { AuthService } from '~/modules/auth'
-import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
+import {
+  firebaseLogin,
+  AuthTokenPayload,
+} from '~/modules/auth/app-services/auth-service'
+import { setCookie } from 'hono/cookie'
+import * as TE from 'fp-ts/TaskEither'
+import * as IO from 'fp-ts/IO'
+import { pipe } from 'fp-ts/function'
 
-export function createAuthRoute(authService: AuthService) {
-  const AuthRoute = new Hono()
+export const AuthRoute = new Hono()
 
-  const firebaseLoginSchema = z.object({
-    firebaseToken: z.string().trim().nonempty(),
-  })
+const firebaseLoginSchema = z.object({
+  firebaseToken: z.string().trim().nonempty(),
+})
 
-  AuthRoute.post(
-    '/login-with-firebase',
-    zValidator('json', firebaseLoginSchema),
-    async (c) => {
-      const data = c.req.valid('json')
-
-      const payload = await authService.firebaseLogin(data.firebaseToken)
-
+AuthRoute.post(
+  '/login-with-firebase',
+  zValidator('json', firebaseLoginSchema),
+  async (c) => {
+    const setRefreshTokenCookie = (payload: AuthTokenPayload) => () => {
       setCookie(c, 'refresh_token', payload.refreshToken, {
         httpOnly: true,
         expires: payload.refreshTokenExpiresAt.toJSDate(),
         path: '/',
       })
-
-      return c.json(
-        {
-          accessToken: payload.accessToken,
-          accessTokenExpiresAt: payload.accessTokenExpiresAt.toISO(),
-        },
-        200
-      )
     }
-  )
 
+    const transformPayload = (payload: AuthTokenPayload) => ({
+      accessToken: payload.accessToken,
+      accessTokenExpiresAt: payload.accessTokenExpiresAt.toISO(),
+    })
+
+    const jsonResponse = (status: number) => (payload: any) =>
+      c.json(payload, status)
+
+    return pipe(
+      c.req.valid('json'),
+      (x) => x.firebaseToken,
+      firebaseLogin,
+      TE.match(
+        (e) => pipe({ message: e.code }, jsonResponse(e.status)),
+        (payload) =>
+          pipe(
+            payload,
+            IO.of,
+            IO.tap(setRefreshTokenCookie),
+            IO.map(transformPayload),
+            IO.map(jsonResponse(200))
+          )()
+      )
+    )()
+  }
+)
+/*
   AuthRoute.post('/refresh', async (c) => {
     const refreshToken = getCookie(c, 'refresh_token')
 
@@ -75,7 +95,5 @@ export function createAuthRoute(authService: AuthService) {
     return c.json({ message: 'Logout successful.' }, 200)
   })
 
-  return AuthRoute
-}
 
-export type AuthRoute = ReturnType<typeof createAuthRoute>
+*/

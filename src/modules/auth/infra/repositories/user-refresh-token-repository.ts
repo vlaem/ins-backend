@@ -2,8 +2,45 @@ import { DateTime } from 'luxon'
 import { Op, FindOptions, InferAttributes } from '@sequelize/core'
 import { UserRefreshToken } from '~/modules/auth/domain/models'
 import { UserRefreshToken as UserRefreshTokenModel } from '~dbmodels/auth'
-import { GenericRepository } from './generic-repository'
+import * as T from 'fp-ts/Task'
+import * as TO from 'fp-ts/TaskOption'
+import { pipe } from 'fp-ts/function'
 
+const refreshTokenToPersistence = (refreshToken: UserRefreshToken) => ({
+  id: refreshToken.id,
+  userId: refreshToken.userId,
+  expiresAt: refreshToken.expiresAt,
+  createdAt: refreshToken.createdAt,
+})
+
+type RefreshTokenPersistence = ReturnType<typeof refreshTokenToPersistence>
+
+export const saveRefreshToken = (refreshToken: UserRefreshToken) => {
+  const save = (x: RefreshTokenPersistence) => () =>
+    UserRefreshTokenModel.upsert(x)
+
+  return pipe(
+    refreshToken,
+    refreshTokenToPersistence,
+    save,
+    T.map(() => refreshToken)
+  )
+}
+
+export const findRefreshTokenById = (id: string) => {
+  const find = (id: string) => () =>
+    UserRefreshTokenModel.findOne({ where: { id: id } })
+
+  return pipe(
+    id,
+    find,
+    TO.fromTask,
+    TO.flatMap(TO.fromNullable),
+    TO.map(UserRefreshToken.load)
+  )
+}
+
+/*
 export class UserRefreshTokenRepository
   implements GenericRepository<UserRefreshToken, UserRefreshTokenModel>
 {
@@ -61,3 +98,4 @@ export class UserRefreshTokenRepository
     })
   }
 }
+*/

@@ -1,50 +1,75 @@
 import jwt from 'jsonwebtoken'
-import { DateTime } from 'luxon'
-import { Config } from '~config'
-import { UnauthorizedError } from '~errors'
+import { DateTime, Duration } from 'luxon'
+import * as JWTConfig from '~config/jwt-config'
+import { pipe } from 'fp-ts/function'
+import { User } from '~/modules/auth/domain/models'
+import * as E from 'fp-ts/Either'
+import * as I from 'fp-ts/Identity'
+import { UnauthorizedError } from '~/shared/errors'
 
-export interface JwtPayload {
+interface JwtDates {
+  issuedAt: DateTime
+  expiresAt: DateTime
+}
+
+export interface EncodeResult {
+  accessToken: string
+  accessTokenExpiresAt: DateTime
+}
+
+interface JWTPayload {
+  iat: number
+  exp: number
   id: string
   email: string
 }
 
-export class JwtHelper {
-  private config: Config
+const getIssuedAtDate = () => DateTime.now()
+const getExpiresAtDate = (duration: Duration) => (issuedAt: DateTime) =>
+  issuedAt.plus(duration)
 
-  constructor(config: Config) {
-    this.config = config
-  }
+const calculateJWTDates = (): JwtDates =>
+  pipe(
+    I.Do,
+    I.bind('issuedAt', () => getIssuedAtDate()),
+    I.bind('expiresAt', ({ issuedAt }) =>
+      pipe(issuedAt, getExpiresAtDate(JWTConfig.getDuration()))
+    )
+  )
 
-  encode(input: JwtPayload) {
-    const now = DateTime.now()
-    const iat = Math.trunc(now.toSeconds())
-    const expiresAt = now.plus(this.config.JWT.duration)
-    const exp = Math.trunc(expiresAt.toSeconds())
+const generatePayload =
+  (user: User) =>
+  (dates: JwtDates): JWTPayload =>
+    pipe(
+      I.Do,
+      I.bind('iat', () => Math.trunc(dates.issuedAt.toSeconds())),
+      I.bind('exp', () => Math.trunc(dates.expiresAt.toSeconds())),
+      I.bind('id', () => user.id),
+      I.bind('email', () => user.email)
+    )
 
-    const payload = {
-      id: input.id,
-      email: input.email,
-      iat,
-      exp,
-    }
+const signPayload = (secret: string) => (payload: JWTPayload) =>
+  pipe(payload, (x) => jwt.sign(x, secret))
 
-    const token = jwt.sign(payload, this.config.JWT.secret)
-    return {
-      accessToken: token,
-      accessTokenExpiresAt: expiresAt,
-    }
-  }
+export const encodeJWT = (user: User): EncodeResult =>
+  pipe(
+    calculateJWTDates(),
+    I.map((x) =>
+      pipe(
+        I.Do,
+        I.bind('accessToken', () =>
+          pipe(x, generatePayload(user), signPayload(JWTConfig.getSecret()))
+        ),
+        I.bind('accessTokenExpiresAt', () => x.expiresAt)
+      )
+    )
+  )
 
-  decode(token: string): JwtPayload {
-    try {
-      const payload = jwt.verify(token, this.config.JWT.secret) as JwtPayload
-      return payload
-    } catch (e) {
-      if (e instanceof jwt.TokenExpiredError) {
-        throw new UnauthorizedError()
-      } else {
-        throw e
-      }
-    }
-  }
-}
+const verify = (token: string) =>
+  jwt.verify(token, JWTConfig.getSecret()) as JWTPayload
+
+export const decodeJWT = (token: string) =>
+  E.tryCatch(
+    () => verify(token),
+    () => UnauthorizedError.of()
+  )

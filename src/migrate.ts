@@ -1,4 +1,4 @@
-import { Config } from './shared/config'
+import { Config } from './shared/config/config'
 import { Umzug } from 'umzug'
 import { createSequelize, createUmzug } from './shared/db'
 import { loggerFactory, Logger } from '~logger'

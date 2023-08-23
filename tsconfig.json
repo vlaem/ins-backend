@@ -5,8 +5,8 @@
     "baseUrl": ".",
     "paths": {
       "~errors": ["src/shared/errors"],
-      "~logger": ["src/shared/logging"],
-      "~config": ["src/shared/config"],
+      "~logger": ["src/shared/logging/logger.ts"],
+      "~config/*": ["src/shared/config/*"],
       "~dbmodels/*": ["src/shared/db/models/*"],      
       "~/*": ["src/*"]
     },

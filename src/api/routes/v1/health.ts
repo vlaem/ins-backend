@@ -1,15 +1,9 @@
 import { Hono } from 'hono'
 
-export function createHealthRoute() {
-  const HealthRoute = new Hono()
+export const HealthRoute = new Hono()
 
-  HealthRoute.get('/', (c) =>
-    c.json({
-      status: 'OK',
-    })
-  )
-
-  return HealthRoute
-}
-
-export type HealthRoute = ReturnType<typeof createHealthRoute>
+HealthRoute.get('/', (c) =>
+  c.json({
+    status: 'OK',
+  })
+)
