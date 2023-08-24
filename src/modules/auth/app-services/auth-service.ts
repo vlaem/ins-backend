@@ -10,6 +10,7 @@ import {
 import {
   saveRefreshToken,
   findRefreshTokenById,
+  deleteRefreshToken,
 } from '~/modules/auth/infra/repositories/user-refresh-token-repository'
 import { UserRefreshToken, User } from '~/modules/auth/domain/models'
 import {
@@ -24,6 +25,7 @@ import * as T from 'fp-ts/Task'
 import * as O from 'fp-ts/Option'
 import { pipe, flow } from 'fp-ts/function'
 import { encodeJWT, EncodeResult } from '~/modules/auth/infra/jwt/jwt-helper'
+import { sequelize } from '~/shared/db/sq'
 
 export interface AuthTokenPayload {
   accessToken: string
@@ -88,23 +90,55 @@ const getRefreshToken = (refreshTokenId: string) =>
     TE.fromTaskOption(() => ResourceNotFoundError.of('REFRESH_TOKEN_NOT_FOUND'))
   )
 
+const saveRefreshTokens =
+  (previousRefreshToken: UserRefreshToken) =>
+  (nextRefreshToken: UserRefreshToken) =>
+    TE.tryCatch(
+      () =>
+        sequelize.transaction(
+          pipe(
+            () => pipe(previousRefreshToken, deleteRefreshToken),
+            () => pipe(nextRefreshToken, saveRefreshToken)
+          )
+        ),
+      () => InvalidOperationError.of('TRANSACTION_ERROR')
+    )
+
 export const refresh = (refreshToken: string) => {
   return pipe(
     refreshToken,
     getRefreshToken,
-    TE.map((x) =>
+    TE.flatMap((x) =>
       pipe(
-        I.Do,
-        I.bind('refreshToken', () => pipe(x, TE.of)),
-        I.bind('user', () =>
+        TE.Do,
+        TE.apS(
+          'user',
           pipe(
             findUserById(x.userId),
-            TE.fromTaskOption(() => ResourceNotFoundError.of('USER_NOT_FOUND')),
-            TE.map(encodeJWT)
+            TE.fromTaskOption(() => ResourceNotFoundError.of('USER_NOT_FOUND'))
           )
-        )
+        ),
+        TE.apS('previousRefreshToken', TE.of(x))
       )
     ),
+    TE.flatMap((x) =>
+      pipe(
+        TE.Do,
+        TE.apS('encodeResult', pipe(x.user, encodeJWT, TE.of)),
+        TE.apS(
+          'newRefreshToken',
+          pipe(x.previousRefreshToken, UserRefreshToken.extendFrom, TE.fromTask)
+        ),
+        TE.apS('previousRefreshToken', pipe(x.previousRefreshToken, TE.of))
+      )
+    ),
+    TE.tap((x) =>
+      pipe(
+        x.previousRefreshToken,
+        saveRefreshTokens(x.newRefreshToken)
+      ),
+    ),
+
   )
 }
 

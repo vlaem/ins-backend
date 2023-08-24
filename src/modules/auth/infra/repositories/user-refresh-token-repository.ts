@@ -40,6 +40,13 @@ export const findRefreshTokenById = (id: string) => {
   )
 }
 
+export const deleteRefreshToken = (refreshToken: UserRefreshToken) => {
+  const destroy = (x: RefreshTokenPersistence) => () =>
+    UserRefreshTokenModel.destroy({ where: { id: x.id } })
+
+  return pipe(refreshToken, refreshTokenToPersistence, destroy)
+}
+
 /*
 export class UserRefreshTokenRepository
   implements GenericRepository<UserRefreshToken, UserRefreshTokenModel>
