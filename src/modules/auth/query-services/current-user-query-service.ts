@@ -1,34 +1,23 @@
-import * as T from 'fp-ts/Task'
-import * as O from 'fp-ts/Option'
+import * as TE from 'fp-ts/TaskEither'
 import { pipe } from 'fp-ts/function'
-import { findeUserByEmail } from '~/modules/auth/infra/repositories/user-repository'
+import { findUserById } from '~/modules/auth/infra/repositories/user-repository'
+import { ResourceNotFoundError } from '~errors'
 
 interface CurrentUserView {
   id: string
   email: string
 }
 
-export class CurrentUserQueryService {
-  private userRepository: UserRepository
-  constructor(userRepository: UserRepository) {
-    this.userRepository = userRepository
-  }
-
-  getCurrentUser(userId: string): T.Task<O.Option<CurrentUserView>> {    
-    const getUser = (id: string) => () => this.userRepository.findByPk(id)
-
-    const s =  pipe(
-      userId,
-      getUser,
-      T.map(O.fromNullable),
-      T.map(
-        O.map((x) => ({
-          id: x.id,
-          email: x.email,
-        }))
-      )
+export const getCurrentUser = (userId: string) =>
+  pipe(
+    userId,
+    findUserById,
+    TE.fromTaskOption(() => ResourceNotFoundError.of('USER_NOT_FOUND')),
+    TE.map(
+      (user) =>
+        ({
+          id: user.id,
+          email: user.email,
+        }) as CurrentUserView
     )
-
-    return s
-  }
-}
+  )

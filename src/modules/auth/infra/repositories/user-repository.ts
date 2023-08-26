@@ -1,8 +1,8 @@
 import { User as UserModel } from '~dbmodels/auth'
-import { User } from '~/modules/auth/domain/models'
+import { User } from '~/modules/auth/domain/models/user'
 import { fromTask, fromNullable, flatMap, map } from 'fp-ts/TaskOption'
 import * as T from 'fp-ts/Task'
-import { pipe, flow } from 'fp-ts/function'
+import { pipe } from 'fp-ts/function'
 
 const userToPersistence = (user: User) => ({
   id: user.id,
@@ -37,55 +37,3 @@ export function findUserById(id: string) {
 
   return pipe(id, getUser, fromTask, flatMap(fromNullable), map(User.load))
 }
-
-/*
-export class UserRepository implements GenericRepository<User, UserModel> {
-  async findOne(
-    options?:
-      | FindOptions<InferAttributes<UserModel, { omit: never }>>
-      | undefined
-  ) {
-    const sqUser = await UserModel.findOne(options)
-
-    if (!sqUser) {
-      return null
-    }
-
-    return User.load(sqUser)
-  }
-
-  async add(user: User): Promise<void> {
-    await UserModel.create({
-      id: user.id,
-      email: user.email,
-      password: user.password,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    })
-  }
-
-  async update(user: User): Promise<void> {
-    await UserModel.update(
-      {
-        email: user.email,
-        password: user.password,
-      },
-      { where: { id: user.id } }
-    )
-  }
-
-  async updateAll(users: User[]): Promise<void> {
-    for (const user of users) {
-      await this.update(user)
-    }
-  }
-
-  async findByEmail(email: string): Promise<User | null> {
-    return this.findOne({ where: { email } })
-  }
-
-  async findByPk(id: string): Promise<User | null> {
-    return this.findOne({ where: { id } })
-  }
-}
-*/

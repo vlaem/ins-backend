@@ -1,28 +1,33 @@
 import { DateTime } from 'luxon'
-import { Op, FindOptions, InferAttributes } from '@sequelize/core'
-import { Invite } from '~/modules/auth/domain/models'
+import { Op } from '@sequelize/core'
+import { Invite } from '~/modules/auth/domain/models/invite'
 import { Invite as InviteModel } from '~dbmodels/auth'
-import { GenericRepository } from './generic-repository'
+import * as T from 'fp-ts/Task'
+import * as TO from 'fp-ts/TaskOption'
+import { pipe } from 'fp-ts/function'
 
-export class InviteRepository
-  implements GenericRepository<Invite, InviteModel>
-{
-  async findOne(
-    options?:
-      | FindOptions<InferAttributes<InviteModel, { omit: never }>>
-      | undefined
-  ) {
-    const sqRefreshToken = await InviteModel.findOne(options)
+const inviteToPersistence = (invite: Invite) => ({
+  id: invite.id,
+  expiresAt: invite.expiresAt,
+  createdAt: invite.createdAt,
+})
 
-    if (!sqRefreshToken) {
-      return null
-    }
+type InvitePersistence = ReturnType<typeof inviteToPersistence>
 
-    return Invite.load(sqRefreshToken)
-  }
+export const saveInvite = (invite: Invite) => {
+  const save = (x: InvitePersistence) => () => InviteModel.upsert(x)
 
-  async findOneNonExpiredById(id: string): Promise<Invite | null> {
-    return this.findOne({
+  return pipe(
+    invite,
+    inviteToPersistence,
+    save,
+    T.map(() => invite)
+  )
+}
+
+export const findOneNonExpiredById = (id: string): TO.TaskOption<Invite> => {
+  const find = (id: string) => () =>
+    InviteModel.findOne({
       where: {
         id,
         expiresAt: {
@@ -30,31 +35,33 @@ export class InviteRepository
         },
       },
     })
-  }
-  async add(refreshToken: Invite): Promise<void> {
-    await InviteModel.create({
-      id: refreshToken.id,
-      expiresAt: refreshToken.expiresAt,
-      createdAt: refreshToken.createdAt,
-    })
-  }
 
-  async update(refreshToken: Invite): Promise<void> {
-    await InviteModel.update(
-      {
-        expiresAt: refreshToken.expiresAt,
-      },
-      { where: { id: refreshToken.id } }
-    )
-  }
+  return pipe(
+    id,
+    find,
+    TO.fromTask,
+    TO.flatMap(TO.fromNullable),
+    TO.map(Invite.load)
+  )
+}
 
-  async updateAll(refreshTokens: Invite[]): Promise<void> {
-    for (const refreshToken of refreshTokens) {
-      await this.update(refreshToken)
-    }
-  }
+export const addInvite = (invite: Invite) => {
+  const save = (x: Invite) => () => InviteModel.upsert(inviteToPersistence(x))
 
-  async destroy(refreshToken: Invite): Promise<void> {
-    await InviteModel.destroy({ where: { id: refreshToken.id } })
-  }
+  return pipe(
+    invite,
+    save,
+    T.map(() => invite)
+  )
+}
+
+export const deleteInvite = (invite: Invite) => {
+  const destroy = (x: Invite) => () =>
+    InviteModel.destroy({ where: { id: x.id } })
+
+  return pipe(
+    invite,
+    destroy,
+    T.map(() => {})
+  )
 }

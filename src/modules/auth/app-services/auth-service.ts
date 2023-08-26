@@ -9,20 +9,23 @@ import {
 } from '~/modules/auth/infra/repositories/user-repository'
 import {
   saveRefreshToken,
-  findRefreshTokenById,
+  findRefreshTokenNonExpiredById,
   deleteRefreshToken,
 } from '~/modules/auth/infra/repositories/user-refresh-token-repository'
-import { UserRefreshToken, User } from '~/modules/auth/domain/models'
+import { findOneNonExpiredById } from '~/modules/auth/infra/repositories/invite-repository'
+import { UserRefreshToken } from '~/modules/auth/domain/models/user-refresh-token'
+import { User } from '~/modules/auth/domain/models/user'
 import {
   ResourceNotFoundError,
   InvalidOperationError,
-  ExtendedHonoError,
+  SystemError,
 } from '~errors'
 import * as TE from 'fp-ts/TaskEither'
 import * as TO from 'fp-ts/TaskOption'
 import * as I from 'fp-ts/Identity'
 import * as T from 'fp-ts/Task'
 import * as O from 'fp-ts/Option'
+import * as E from 'fp-ts/Either'
 import { pipe, flow } from 'fp-ts/function'
 import { encodeJWT, EncodeResult } from '~/modules/auth/infra/jwt/jwt-helper'
 import { sequelize } from '~/shared/db/sq'
@@ -83,14 +86,14 @@ export const firebaseLogin = (idToken: string) =>
     TE.map(tokenGroupToAuthTokenPayload)
   )
 
-const getRefreshToken = (refreshTokenId: string) =>
+const getValidRefreshToken = (refreshTokenId: string) =>
   pipe(
     refreshTokenId,
-    findRefreshTokenById,
+    findRefreshTokenNonExpiredById,
     TE.fromTaskOption(() => ResourceNotFoundError.of('REFRESH_TOKEN_NOT_FOUND'))
   )
 
-const saveRefreshTokens =
+const persistRefreshOperation =
   (previousRefreshToken: UserRefreshToken) =>
   (nextRefreshToken: UserRefreshToken) =>
     TE.tryCatch(
@@ -101,24 +104,31 @@ const saveRefreshTokens =
             () => pipe(nextRefreshToken, saveRefreshToken)
           )
         ),
-      () => InvalidOperationError.of('TRANSACTION_ERROR')
+      () => SystemError.of('TRANSACTION_ERROR')
     )
 
-export const refresh = (refreshToken: string) => {
-  return pipe(
-    refreshToken,
-    getRefreshToken,
-    TE.flatMap((x) =>
+const getExistingUserById = (userId: string) =>
+  pipe(
+    userId,
+    findUserById,
+    TE.fromTaskOption(() => ResourceNotFoundError.of('USER_NOT_FOUND'))
+  )
+
+export const refresh = (refreshTokenId: string) =>
+  pipe(
+    refreshTokenId,
+    getValidRefreshToken,
+    TE.map((x) =>
+      pipe(
+        I.Do,
+        I.bind('previousRefreshToken', () => x)
+      )
+    ),
+    TE.flatMap(({ previousRefreshToken }) =>
       pipe(
         TE.Do,
-        TE.apS(
-          'user',
-          pipe(
-            findUserById(x.userId),
-            TE.fromTaskOption(() => ResourceNotFoundError.of('USER_NOT_FOUND'))
-          )
-        ),
-        TE.apS('previousRefreshToken', TE.of(x))
+        TE.apS('user', getExistingUserById(previousRefreshToken.userId)),
+        TE.apS('previousRefreshToken', TE.of(previousRefreshToken))
       )
     ),
     TE.flatMap((x) =>
@@ -126,249 +136,57 @@ export const refresh = (refreshToken: string) => {
         TE.Do,
         TE.apS('encodeResult', pipe(x.user, encodeJWT, TE.of)),
         TE.apS(
-          'newRefreshToken',
+          'userRefreshToken',
           pipe(x.previousRefreshToken, UserRefreshToken.extendFrom, TE.fromTask)
         ),
         TE.apS('previousRefreshToken', pipe(x.previousRefreshToken, TE.of))
       )
     ),
-    TE.tap((x) =>
+    TE.tap(({ previousRefreshToken, userRefreshToken }) =>
       pipe(
-        x.previousRefreshToken,
-        saveRefreshTokens(x.newRefreshToken)
-      ),
+        persistRefreshOperation,
+        I.ap(previousRefreshToken),
+        I.ap(userRefreshToken)
+      )
     ),
-
+    TE.map(tokenGroupToAuthTokenPayload)
   )
-}
 
-//   /**
-//    * Generate a new token and refresh token from a previous non expired refresh token.
-//    * It will destroy the previous refresh token.
-//    * @param refreshToken - refresh token
-//    * @returns
-//    */
-//   async refresh(refreshToken: string): Promise<AuthTokenPayload> {
-//     this.logger.debug('AuthService.refresh', {
-//       refreshToken,
-//     })
+export const logout = (refreshTokenId: string) =>
+  pipe(refreshTokenId, getValidRefreshToken, TE.map(deleteRefreshToken))
 
-//     const existingUserRefreshToken =
-//       await this.userRefreshTokenRepository.findOneNonExpiredById(refreshToken)
+export const redeemInvitaWithFirebaseToken =
+  (inviteCode: string) => (firebaseToken: string) => {
+    const checkEmailAvailability = (decodedUserData: FirebaseDecodedUserData) =>
+      pipe(
+        decodedUserData,
+        (x) => x.email,
+        findUserByEmail,
+        TO.match(
+          () => TE.left(InvalidOperationError.of('EMAIL_ALREADY_IN_USE')),
+          () => TE.right(decodedUserData)
+        ),
+        TE.fromTask,
+        TE.flatten
+      )
 
-//     if (!existingUserRefreshToken) {
-//       throw new InvalidOperationError('INVALID_REFRESH_TOKEN')
-//     }
+    const findValidInvite = (inviteCode: string) =>
+      pipe(
+        inviteCode,
+        findOneNonExpiredById,
+        TE.fromTaskOption(() =>
+          ResourceNotFoundError.of('LINK_INVITE_NOT_FOUND')
+        )
+      )
 
-//     const user = await this.userRepository.findByPk(
-//       existingUserRefreshToken.userId
-//     )
-
-//     if (!user) {
-//       throw new InvalidOperationError('INVALID_REFRESH_TOKEN')
-//     }
-
-//     const newTokenGroup = this.generateTokenAndRefresh({
-//       id: user.id,
-//       email: user.email,
-//     })
-
-//     await this.sequelize.transaction(async () => {
-//       await this.userRefreshTokenRepository.destroy(existingUserRefreshToken)
-//       await this.userRefreshTokenRepository.add(newTokenGroup.userRefreshToken)
-//     })
-
-//     return {
-//       accessToken: newTokenGroup.accessToken,
-//       accessTokenExpiresAt: newTokenGroup.accessTokenExpiresAt,
-//       refreshToken: newTokenGroup.userRefreshToken.id,
-//       refreshTokenExpiresAt: newTokenGroup.userRefreshToken.expiresAt,
-//     }
-//   }
+    return pipe(
+      inviteCode,
+      findValidInvite,
+      TE.flap
+    )
+  }
 
 /**
-
-
-// export class AuthService {
-//   private firebaseAdmin: FirebaseAdmin
-//   private inviteRepository: InviteRepository
-//   private userRefreshTokenRepository: UserRefreshTokenRepository
-//   private userRepository: UserRepository
-//   private jwtHelper: JwtHelper
-//   private sequelize: Sequelize
-//   private logger: Logger
-
-//   constructor(
-//     firebaseAdmin: FirebaseAdmin,
-//     inviteRepository: InviteRepository,
-//     userRefreshTokenRepository: UserRefreshTokenRepository,
-//     userRepository: UserRepository,
-//     jwtHelper: JwtHelper,
-//     sequelize: Sequelize,
-//     logger: Logger
-//   ) {
-//     this.firebaseAdmin = firebaseAdmin
-//     this.inviteRepository = inviteRepository
-//     this.userRefreshTokenRepository = userRefreshTokenRepository
-//     this.userRepository = userRepository
-//     this.jwtHelper = jwtHelper
-//     this.sequelize = sequelize
-//     this.logger = logger
-//   }
-
-//   /**
-//    * Generate a token and a user refresh token for a given user.
-//    * @param userData - user data
-//    * @returns {TokenGroup}
-//    */
-//   private generateTokenAndRefresh(userData: UserData): TokenGroup {
-//     const { accessToken, accessTokenExpiresAt } =
-//       this.jwtHelper.encode(userData)
-//     const userRefreshToken = UserRefreshToken.create(
-//       userData.id,
-//       DateTime.now().plus({ days: 30 })
-//     )
-
-//     return {
-//       accessToken,
-//       userRefreshToken,
-//       accessTokenExpiresAt,
-//     }
-//   }
-
-//   /**
-//    * Authenticate user with email and password, returning a token and a refresh token.
-//    * @param email - user email
-//    * @param password - user password
-//    * @returns {Promise<AuthTokenPayload>}
-//    */
-//   async passwordLogin(
-//     email: string,
-//     password: string
-//   ): Promise<AuthTokenPayload> {
-//     const user = await this.userRepository.findByEmail(email)
-
-//     if (!user) {
-//       throw new InvalidOperationError('INVALID_USEREMAIL_OR_PASSWORD')
-//     }
-
-//     const isValidPassword = await bycrypt.compare(password, user.password)
-
-//     if (!isValidPassword) {
-//       throw new InvalidOperationError('INVALID_USEREMAIL_OR_PASSWORD')
-//     }
-
-//     const tokenGroup = this.generateTokenAndRefresh({
-//       id: user.id,
-//       email: user.email,
-//     })
-
-//     await this.userRefreshTokenRepository.update(tokenGroup.userRefreshToken)
-
-//     return {
-//       accessToken: tokenGroup.accessToken,
-//       accessTokenExpiresAt: tokenGroup.accessTokenExpiresAt,
-//       refreshToken: tokenGroup.userRefreshToken.id,
-//       refreshTokenExpiresAt: tokenGroup.userRefreshToken.expiresAt,
-//     }
-//   }
-
-//   /**
-//    * Generate a new token and refresh token from a previous non expired refresh token.
-//    * It will destroy the previous refresh token.
-//    * @param refreshToken - refresh token
-//    * @returns
-//    */
-//   async refresh(refreshToken: string): Promise<AuthTokenPayload> {
-//     this.logger.debug('AuthService.refresh', {
-//       refreshToken,
-//     })
-
-//     const existingUserRefreshToken =
-//       await this.userRefreshTokenRepository.findOneNonExpiredById(refreshToken)
-
-//     if (!existingUserRefreshToken) {
-//       throw new InvalidOperationError('INVALID_REFRESH_TOKEN')
-//     }
-
-//     const user = await this.userRepository.findByPk(
-//       existingUserRefreshToken.userId
-//     )
-
-//     if (!user) {
-//       throw new InvalidOperationError('INVALID_REFRESH_TOKEN')
-//     }
-
-//     const newTokenGroup = this.generateTokenAndRefresh({
-//       id: user.id,
-//       email: user.email,
-//     })
-
-//     await this.sequelize.transaction(async () => {
-//       await this.userRefreshTokenRepository.destroy(existingUserRefreshToken)
-//       await this.userRefreshTokenRepository.add(newTokenGroup.userRefreshToken)
-//     })
-
-//     return {
-//       accessToken: newTokenGroup.accessToken,
-//       accessTokenExpiresAt: newTokenGroup.accessTokenExpiresAt,
-//       refreshToken: newTokenGroup.userRefreshToken.id,
-//       refreshTokenExpiresAt: newTokenGroup.userRefreshToken.expiresAt,
-//     }
-//   }
-
-//   async logout(refreshToken: string): Promise<void> {
-//     const existingUserRefreshToken =
-//       await this.userRefreshTokenRepository.findOneNonExpiredById(refreshToken)
-
-//     if (!existingUserRefreshToken) {
-//       // It is fine to not find a refresh token when logging out, the controller should still attempt to destroy the cookie
-//       return
-//     }
-
-//     await this.userRefreshTokenRepository.destroy(existingUserRefreshToken)
-//   }
-
-//   async redeemInviteWithEmailAndPassword(
-//     inviteCode: string,
-//     email: string,
-//     password: string
-//   ): Promise<AuthTokenPayload> {
-//     const invite = await this.inviteRepository.findOneNonExpiredById(inviteCode)
-
-//     if (!invite) {
-//       throw new ResourceNotFoundError('LINK_INVITE_NOT_FOUND')
-//     }
-
-//     const user = await this.userRepository.findByEmail(email)
-
-//     if (user) {
-//       throw new InvalidOperationError('EMAIL_ALREADY_IN_USE')
-//     }
-
-//     const encryptedPassword = await bycrypt.hash(password, 13)
-
-//     const newUser = User.createWithEmailAndPassword(email, encryptedPassword)
-
-//     const newTokenGroup = this.generateTokenAndRefresh({
-//       id: newUser.id,
-//       email: newUser.email,
-//     })
-
-//     await this.sequelize.transaction(async () => {
-//       await this.userRepository.add(newUser)
-//       await this.inviteRepository.destroy(invite)
-//       await this.userRefreshTokenRepository.add(newTokenGroup.userRefreshToken)
-//     })
-
-//     return {
-//       accessToken: newTokenGroup.accessToken,
-//       accessTokenExpiresAt: newTokenGroup.accessTokenExpiresAt,
-//       refreshToken: newTokenGroup.userRefreshToken.id,
-//       refreshTokenExpiresAt: newTokenGroup.userRefreshToken.expiresAt,
-//     }
-//   }
-
 //   async redeemInvitaWithFirebaseToken(
 //     inviteCode: string,
 //     firebaseToken: string
@@ -421,3 +239,4 @@ export const refresh = (refreshToken: string) => {
 //     }
 //   }
 // }
+*/
