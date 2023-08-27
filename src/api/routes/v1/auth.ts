@@ -12,6 +12,7 @@ import { pipe } from 'fp-ts/function'
 
 export const AuthRoute = new Hono()
 
+/*
 const firebaseLoginSchema = z.object({
   firebaseToken: z.string().trim().nonempty(),
 })

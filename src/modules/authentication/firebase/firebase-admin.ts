@@ -5,6 +5,7 @@ import { cert } from 'firebase-admin/app'
 import * as TE from 'fp-ts/TaskEither'
 import { pipe } from 'fp-ts/function'
 
+// TODO: This should be functional
 class FirebaseAdminAppSingleton {
   private static instance: FirebaseAdminAppSingleton
 
@@ -56,7 +57,7 @@ export const decodeFirebaseToken = (idToken: string) =>
     verifyIdToken,
     TE.flatMap((x) =>
       x.email
-        ? TE.right(toFirebaseDecodedUserData(x))
-        : TE.left(InvalidOperationError.of('INVALID_FIREBASE_TOKEN'))
+        ? pipe(x, toFirebaseDecodedUserData, TE.right)
+        : pipe('INVALID_FIREBASE_TOKEN', InvalidOperationError.of, TE.left)
     )
   )

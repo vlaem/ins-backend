@@ -1,5 +1,0 @@
-export { createHealthRoute } from './health'
-export { createAuthRoute } from './auth'
-export { createInviteRoute } from './invites'
-export { createCurrentUserRoute } from './current-user'
-export { createV1Route, V1Route } from '../v1-route'

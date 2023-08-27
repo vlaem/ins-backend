@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import CustomDataTypes from '~/shared/db/custom-data-types'
+import CustomDataTypes from '~/infrastructure/db/custom-data-types'
 import {
   DataTypes,
   Model,
@@ -15,18 +15,18 @@ export class User extends Model<
 > {
   declare id: string
   declare email: string
-  declare password: string
   declare createdAt: DateTime
   declare updatedAt: DateTime
 }
+
 export class UserRefreshToken extends Model<
   InferAttributes<UserRefreshToken>,
   InferCreationAttributes<UserRefreshToken>
 > {
   declare id: string
   declare userId: ForeignKey<string>
+  declare issuedAt: DateTime
   declare expiresAt: DateTime
-  declare createdAt: DateTime
 }
 
 export class Invite extends Model<
@@ -50,10 +50,6 @@ export function init(sequelize: Sequelize) {
         allowNull: false,
         unique: true,
       },
-      password: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
       createdAt: {
         type: CustomDataTypes.DATETIME,
         allowNull: false,
@@ -63,7 +59,6 @@ export function init(sequelize: Sequelize) {
       sequelize,
       timestamps: false,
       underscored: true,
-      schema: 'auth',
     }
   )
 
@@ -90,7 +85,6 @@ export function init(sequelize: Sequelize) {
       sequelize,
       timestamps: false,
       underscored: true,
-      schema: 'auth',
     }
   )
 
@@ -113,7 +107,6 @@ export function init(sequelize: Sequelize) {
       sequelize,
       timestamps: false,
       underscored: true,
-      schema: 'auth',
     }
   )
 

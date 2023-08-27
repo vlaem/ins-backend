@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 import { DateTime, Duration } from 'luxon'
 import * as JWTConfig from '~config/jwt-config'
 import { pipe } from 'fp-ts/function'
-import { User } from '~/modules/auth/domain/models/user'
+import { User } from '~domain/models/user'
 import * as E from 'fp-ts/Either'
 import * as I from 'fp-ts/Identity'
 import { UnauthorizedError } from '~/shared/errors'
@@ -12,7 +12,7 @@ interface JwtDates {
   expiresAt: DateTime
 }
 
-export interface EncodeResult {
+export interface AccessTokenGroup {
   accessToken: string
   accessTokenExpiresAt: DateTime
 }
@@ -51,24 +51,24 @@ const generatePayload =
 const signPayload = (secret: string) => (payload: JWTPayload) =>
   pipe(payload, (x) => jwt.sign(x, secret))
 
-export const encodeJWT = (user: User): EncodeResult =>
+export const encodeAccessToken = (user: User): AccessTokenGroup =>
   pipe(
-    calculateJWTDates(),
-    I.map((x) =>
-      pipe(
-        I.Do,
-        I.bind('accessToken', () =>
-          pipe(x, generatePayload(user), signPayload(JWTConfig.getSecret()))
-        ),
-        I.bind('accessTokenExpiresAt', () => x.expiresAt)
-      )
-    )
+    I.Do,
+    I.bind('dates', calculateJWTDates),
+    I.bind('accessToken', ({ dates }) =>
+      pipe(dates, generatePayload(user), signPayload(JWTConfig.getSecret()))
+    ),
+    I.bind('accessTokenExpiresAt', ({ dates }) => dates.expiresAt),
+    I.map(({ accessToken, accessTokenExpiresAt }) => ({
+      accessToken,
+      accessTokenExpiresAt,
+    }))
   )
 
 const verify = (token: string) =>
   jwt.verify(token, JWTConfig.getSecret()) as JWTPayload
 
-export const decodeJWT = (token: string) =>
+export const decodeAccessToken = (token: string) =>
   E.tryCatch(
     () => verify(token),
     () => UnauthorizedError.of()

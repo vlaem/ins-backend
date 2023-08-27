@@ -1,25 +1,31 @@
 import { Hono } from 'hono'
 import { z } from 'zod'
 import { zValidator } from '@hono/zod-validator'
-import { AuthService, InviteQueryService } from '~/modules/auth'
-import { setCookie } from 'hono/cookie'
+import { findValidInvite } from '~/modules/authentication/queries'
+import * as TE from 'fp-ts/TaskEither'
+import * as IO from 'fp-ts/IO'
+import { pipe } from 'fp-ts/function'
 
-export function createInviteRoute(
-  authService: AuthService,
-  inviteQueryService: InviteQueryService
-) {
-  const InvitesRoute = new Hono()
+export const InvitesRoute = new Hono()
 
-  InvitesRoute.get('/:inviteCode', async (c) => {
-    const inviteCode = c.req.param('inviteCode')
+InvitesRoute.get('/:inviteCode', async (c) => {
+  const jsonResponse = (status: number) => (payload: any) =>
+    c.json(payload, status)
 
-    const result = await inviteQueryService.getInvite(inviteCode)
-    return c.json(result, 200)
-  })
+  return pipe(
+    c.req.param('inviteCode'),
+    findValidInvite,
+    TE.match(
+      (e) => pipe({ message: e.code }, jsonResponse(e.status)),
+      (inviteView) => pipe(inviteView, jsonResponse(200))
+    )
+  )()
+})
 
-  const redeemFirebase = z.object({
-    firebaseToken: z.string().trim().nonempty(),
-  })
+/*
+const redeemFirebase = z.object({
+  firebaseToken: z.string().trim().nonempty(),
+})
 
   InvitesRoute.patch(
     '/:inviteCode/redeem-firebase',
@@ -47,8 +53,4 @@ export function createInviteRoute(
       )
     }
   )
-
-  return InvitesRoute
-}
-
-export type InviteRoute = ReturnType<typeof createInviteRoute>
+*/
