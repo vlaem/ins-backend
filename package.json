@@ -18,11 +18,12 @@
     ".": "./dist/server.js",
     "./migrate": "./dist/migrate.js"
   },
-  "imports": {
+  "imports": {    
     "~errors": "./src/shared/errors/index.ts",
-    "~logger": "./src/shared/logging/logger.ts",
-    "~config": "./src/config",
-    "~dbmodels": "./src/shared/db/models",
+    "~logger": "./src/infrastructure/logging/logger.ts",
+    "~domain/*": "./src/domain/*.ts",
+    "~config/*": "./src/infrastructure/config/*",
+    "~dbmodels/*": "./src/shinfrastructureared/db/models/*",
     "~": "./src"
   },
   "dependencies": {
@@ -30,7 +31,6 @@
     "@hono/zod-validator": "^0.1.3",
     "@sequelize/core": "^7.0.0-alpha.27",
     "bcryptjs": "^2.4.3",
-    "bottlejs": "^2.0.1",
     "dotenv": "^16.3.1",
     "firebase-admin": "^11.10.1",
     "fp-ts": "^2.16.1",

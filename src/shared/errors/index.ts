@@ -23,7 +23,7 @@ export class ForbiddenError extends ExtendedHonoError {
  */
 export class UnauthorizedError extends ExtendedHonoError {
   constructor() {
-    super(401, 'UNAUTHORIZED_ERROR')
+    super(401, 'UNAUTHORIZED')
     this.name = 'UnauthorizedError'
   }
 

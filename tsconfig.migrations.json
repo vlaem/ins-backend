@@ -1,6 +1,6 @@
 {
   "extends": "@tsconfig/node18/tsconfig.json",
-  "include": ["src/shared/db/migrations/*.ts"],
+  "include": ["src/infrastructure/db/migrations/*.ts"],
   "compilerOptions": {
     "baseUrl": ".",
     "types": ["node"],

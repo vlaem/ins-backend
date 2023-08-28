@@ -2059,11 +2059,6 @@ bnf-parser@3.1.4:
   resolved "https://registry.npmjs.org/bnf-parser/-/bnf-parser-3.1.4.tgz"
   integrity sha512-4UCFYI4QIcGcVMCmUvC9W4KC1cTAd3zVxrP2b35LD43Lf5WI+0vE2TFIrUD6otfqO7swTAxTb7ju+YladRI91A==
 
-bottlejs@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.npmjs.org/bottlejs/-/bottlejs-2.0.1.tgz"
-  integrity sha512-50T0bzqeAqZ+//kgjdDxNu7UP8Je04isNPyHPwwOOPoeZmtVESkuF9nwkWEqSEd9Sw1yJ1oaoHBAMxe/wG4Zzg==
-
 bplist-parser@^0.2.0:
   version "0.2.0"
   resolved "https://registry.npmjs.org/bplist-parser/-/bplist-parser-0.2.0.tgz"

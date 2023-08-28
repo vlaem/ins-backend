@@ -1,17 +1,6 @@
-import { Config } from './shared/config/config'
-import { Umzug } from 'umzug'
-import { createSequelize, createUmzug } from './shared/db'
-import { loggerFactory, Logger } from '~logger'
-import Bottle from 'bottlejs'
-
-const bottle = new Bottle()
-bottle.service('config', Config)
-bottle.service('sequelize', createSequelize, 'config')
-bottle.service('logger', loggerFactory, 'config')
-bottle.service('umzug', createUmzug, 'logger', 'sequelize')
-
-const logger = bottle.container.logger as Logger
-const umzug = bottle.container.umzug as Umzug
+import '~config/load'
+import { logger } from '~logger'
+import { umzug } from './infrastructure/db/umzug'
 
 umzug.up().then(() => {
   logger.info('Migration complete')

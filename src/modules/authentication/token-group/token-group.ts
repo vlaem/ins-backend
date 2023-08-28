@@ -18,7 +18,7 @@ export interface TokenGroup {
 
 export const generateAuthTokenPayload =
   (accessTokenGroup: AccessTokenGroup) =>
-  (userRefreshToken: UserRefreshToken) =>
+  (userRefreshToken: UserRefreshToken): AuthTokenPayload =>
     pipe(
       I.Do,
       I.bind('accessToken', () => accessTokenGroup.accessToken),

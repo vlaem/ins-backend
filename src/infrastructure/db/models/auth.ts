@@ -54,6 +54,10 @@ export function init(sequelize: Sequelize) {
         type: CustomDataTypes.DATETIME,
         allowNull: false,
       },
+      updatedAt: {
+        type: CustomDataTypes.DATETIME,
+        allowNull: false,
+      },
     },
     {
       sequelize,
@@ -76,7 +80,7 @@ export function init(sequelize: Sequelize) {
         type: CustomDataTypes.DATETIME,
         allowNull: false,
       },
-      createdAt: {
+      issuedAt: {
         type: CustomDataTypes.DATETIME,
         allowNull: false,
       },
