@@ -18,12 +18,13 @@
     ".": "./dist/server.js",
     "./migrate": "./dist/migrate.js"
   },
-  "imports": {    
+  "imports": {
+    "~domain": "./src/domain",
     "~errors": "./src/shared/errors/index.ts",
     "~logger": "./src/infrastructure/logging/logger.ts",
-    "~domain/*": "./src/domain/*.ts",
-    "~config/*": "./src/infrastructure/config/*",
-    "~dbmodels/*": "./src/shinfrastructureared/db/models/*",
+    "~config": "./src/infrastructure/config",
+    "~dbmodels": "./src/infrastructure/db/models",
+    "~db": "./src/infrastructure/db",
     "~": "./src"
   },
   "dependencies": {
