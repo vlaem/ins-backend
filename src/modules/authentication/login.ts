@@ -11,8 +11,7 @@ import {
   UserRefreshToken,
   createRefreshTokenForUser,
 } from '~domain/models/user-refresh-token'
-import { encodeAccessToken } from './token-group/jwt-helper'
-import { generateAuthTokenPayload } from './token-group/token-group'
+import { encodeAccessToken, generateAuthTokenPayload } from './access-token'
 import { decodeFirebaseToken } from './firebase/firebase-admin'
 import { User } from '~domain/models/user'
 
@@ -73,8 +72,8 @@ export const logout = (refreshTokenId: string) =>
     TE.flatMapTask((x) => pipe(x, UserRefreshTokenRepo.destroy))
   )
 
-export const refresh = (refreshTokenId: string) => {
-  return pipe(
+export const refresh = (refreshTokenId: string) =>
+  pipe(
     TE.Do,
     TE.bind('previousRefreshToken', () =>
       pipe(refreshTokenId, findRefreshTokenById)
@@ -105,4 +104,3 @@ export const refresh = (refreshTokenId: string) => {
       )
     )
   )
-}

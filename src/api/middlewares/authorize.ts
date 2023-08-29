@@ -1,49 +1,71 @@
-import { MiddlewareHandler } from 'hono'
-import { AuthService } from '~/modules/auth'
+import { MiddlewareHandler, Context } from 'hono'
 
-export function createAuthorizeMiddleware(
-  authService: AuthService
-): AuthorizeMiddleware {
-  return () => {
-    return async (c, next) => {
-      const authHeader = c.req.header('Authorization')
+import {
+  decodeAccessToken,
+  JWTPayload,
+} from '~/modules/authentication/access-token'
+import { pipe } from 'fp-ts/function'
+import * as S from 'fp-ts/string'
+import * as O from 'fp-ts/Option'
+import * as E from 'fp-ts/Either'
+import * as TE from 'fp-ts/TaskEither'
+import { UnauthorizedError } from '~/shared/errors'
 
-      if (!authHeader) {
-        return c.json({ message: 'Unauthorized' }, 401)
-      }
+const getAccessTokenFromHeader = (authHeader: string) =>
+  pipe(
+    O.Do,
+    O.bind('authHeaderParts', () =>
+      pipe(
+        authHeader,
+        S.split(' '),
+        O.fromPredicate((x) => x.length === 2)
+      )
+    ),
+    O.bind('type', ({ authHeaderParts }) =>
+      pipe(
+        authHeaderParts,
+        (x) => x[0],
+        O.fromPredicate((x) => x === 'Bearer')
+      )
+    ),
+    O.bind('token', ({ authHeaderParts }) =>
+      pipe(authHeaderParts, (x) => x[1], O.fromNullable)
+    ),
+    O.map((x) => x.token)
+  )
 
-      const [type, token] = authHeader.split(' ')
-
-      if (type !== 'Bearer') {
-        return c.json({ message: 'Unauthorized' }, 401)
-      }
-
-      const payload = await authService.verifyToken(token)
-
-      if (payload === null) {
-        return c.json({ message: 'Unauthorized' }, 401)
-      }
-
+export function authorize(): MiddlewareHandler {
+  return async (c, next) => {
+    const setUserSesion = (payload: JWTPayload) => {
       c.set(userSessionKey, {
         userId: payload.id,
         email: payload.email,
       })
-
-      c.get('logger')
-
-      await next()
     }
+
+    const jsonResponse = (status: number) => (payload: any) =>
+      c.json(payload, status)
+
+    return pipe(
+      c.req.header('Authorization'),
+      O.fromNullable,
+      O.flatMap(getAccessTokenFromHeader),
+      O.map(decodeAccessToken),
+      E.fromOption(() => UnauthorizedError.of()),
+      E.flatten,
+      E.tap((x) => pipe(x, setUserSesion, E.of)),
+      TE.fromEither,
+      TE.match(
+        (e) => pipe({ message: e.code }, jsonResponse(e.status)),
+        () => () => next()
+      )
+    )()
   }
 }
 
 const userSessionKey = 'user-session'
 
-export type AuthorizeMiddleware = () => MiddlewareHandler
-
-export const getUserSession = (c: any): UserSession => {
-  const userSession = c.get(userSessionKey)
-  return userSession
-}
+export const getUserSession = (c: Context): UserSession => c.get(userSessionKey)
 
 export interface UserSession {
   userId: string

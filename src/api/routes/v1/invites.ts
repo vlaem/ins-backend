@@ -8,7 +8,7 @@ import {
 import * as TE from 'fp-ts/TaskEither'
 import { pipe } from 'fp-ts/function'
 import { setCookie } from 'hono/cookie'
-import { AuthTokenPayload } from '~/modules/authentication/token-group/token-group'
+import { AuthTokenPayload } from '~/modules/authentication/access-token'
 
 export const InvitesRoute = new Hono()
 

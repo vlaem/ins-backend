@@ -19,8 +19,7 @@ import {
 import { User } from '~domain/models/user'
 import { Invite } from '~domain/models/invite'
 import { createRefreshTokenForUser } from '~domain/models/user-refresh-token'
-import { encodeAccessToken } from './token-group/jwt-helper'
-import { generateAuthTokenPayload } from './token-group/token-group'
+import { encodeAccessToken, generateAuthTokenPayload } from './access-token'
 
 interface InviteView {
   id: string

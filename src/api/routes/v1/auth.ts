@@ -6,7 +6,7 @@ import {
   logout,
   refresh,
 } from '~/modules/authentication/login'
-import { AuthTokenPayload } from '~/modules/authentication/token-group/token-group'
+import { AuthTokenPayload } from '~/modules/authentication/access-token'
 import { setCookie, getCookie, deleteCookie } from 'hono/cookie'
 import * as TE from 'fp-ts/TaskEither'
 import { pipe } from 'fp-ts/function'

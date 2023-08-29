@@ -6,6 +6,7 @@ import { User } from '~domain/models/user'
 import * as E from 'fp-ts/Either'
 import * as I from 'fp-ts/Identity'
 import { UnauthorizedError } from '~/shared/errors'
+import { UserRefreshToken } from '~domain/models/user-refresh-token'
 
 interface JwtDates {
   issuedAt: DateTime
@@ -17,7 +18,7 @@ export interface AccessTokenGroup {
   accessTokenExpiresAt: DateTime
 }
 
-interface JWTPayload {
+export interface JWTPayload {
   iat: number
   exp: number
   id: string
@@ -73,3 +74,24 @@ export const decodeAccessToken = (token: string) =>
     () => verify(token),
     () => UnauthorizedError.of()
   )
+
+export interface AuthTokenPayload {
+  accessToken: string
+  accessTokenExpiresAt: DateTime
+  refreshToken: string
+  refreshTokenExpiresAt: DateTime
+}
+
+export const generateAuthTokenPayload =
+  (accessTokenGroup: AccessTokenGroup) =>
+  (userRefreshToken: UserRefreshToken): AuthTokenPayload =>
+    pipe(
+      I.Do,
+      I.bind('accessToken', () => accessTokenGroup.accessToken),
+      I.bind(
+        'accessTokenExpiresAt',
+        () => accessTokenGroup.accessTokenExpiresAt
+      ),
+      I.bind('refreshToken', () => userRefreshToken.id),
+      I.bind('refreshTokenExpiresAt', () => userRefreshToken.expiresAt)
+    )
