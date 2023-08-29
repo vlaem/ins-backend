@@ -88,13 +88,11 @@ export const refresh = (refreshTokenId: string) =>
       pipe(user, encodeAccessToken, TE.of)
     ),
     TE.tap(({ previousRefreshToken, userRefreshToken, user }) =>
-      transaction(() =>
-        pipe(
-          UserRepo.save(user),
-          UserRefreshTokenRepo.save(userRefreshToken),
-          UserRefreshTokenRepo.destroy(previousRefreshToken)
-        )
-      )
+      transaction([
+        UserRepo.save(user),
+        UserRefreshTokenRepo.save(userRefreshToken),
+        UserRefreshTokenRepo.destroy(previousRefreshToken),
+      ])
     ),
     TE.map(({ userRefreshToken, accessTokenGroup }) =>
       pipe(

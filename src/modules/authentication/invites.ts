@@ -20,6 +20,7 @@ import { User } from '~domain/models/user'
 import { Invite } from '~domain/models/invite'
 import { createRefreshTokenForUser } from '~domain/models/user-refresh-token'
 import { encodeAccessToken, generateAuthTokenPayload } from './access-token'
+import { v4 as uuidv4 } from 'uuid'
 
 interface InviteView {
   id: string
@@ -64,9 +65,8 @@ const fromDecodedFirebaseTokenToUser = (
   decodedUserData: FirebaseDecodedUserData
 ): User =>
   pipe(decodedUserData, (x) => ({
-    id: x.uid,
+    id: uuidv4(),
     email: x.email,
-    firebaseUid: x.uid,
     createdAt: DateTime.now(),
     updatedAt: DateTime.now(),
   }))
@@ -94,13 +94,11 @@ export const reedeemInviteWithFirebaseToken =
         pipe(user, encodeAccessToken, TE.of)
       ),
       TE.tap(({ invite, userRefreshToken, user }) =>
-        transaction(() =>
-          pipe(
-            UserRepo.save(user),
-            InviteRepo.destroy(invite),
-            UserRefreshTokenRepo.save(userRefreshToken)
-          )
-        )
+        transaction([
+          UserRepo.save(user),
+          InviteRepo.destroy(invite),
+          UserRefreshTokenRepo.save(userRefreshToken),
+        ])
       ),
       TE.map(({ userRefreshToken, accessTokenGroup }) =>
         pipe(

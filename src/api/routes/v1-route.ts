@@ -3,6 +3,7 @@ import { Hono } from 'hono'
 import { honoSwaggerJsdoc } from 'hono-swagger-jsdoc'
 import { AuthRoute } from './v1/auth'
 import { InvitesRoute } from './v1/invites'
+import { CurrentUserRoute } from './v1/current-user'
 
 export const V1Route = new Hono()
 
@@ -35,3 +36,4 @@ V1Route.get(
   .route('/health', HealthRoute)
   .route('/invites', InvitesRoute)
   .route('/auth', AuthRoute)
+  .route('/current-user', CurrentUserRoute)

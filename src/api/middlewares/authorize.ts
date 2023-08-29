@@ -57,7 +57,7 @@ export function authorize(): MiddlewareHandler {
       TE.fromEither,
       TE.match(
         (e) => pipe({ message: e.code }, jsonResponse(e.status)),
-        () => () => next()
+        () => next()
       )
     )()
   }

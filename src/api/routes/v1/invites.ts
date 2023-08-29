@@ -55,8 +55,8 @@ InvitesRoute.patch(
       c.json(payload, status)
 
     return pipe(
-      inviteCode,
-      reedeemInviteWithFirebaseToken(firebaseToken),
+      firebaseToken,
+      reedeemInviteWithFirebaseToken(inviteCode),
       TE.tap((x) => pipe(x, setRefreshTokenCookie, TE.of)),
       TE.map(transformPayload),
       TE.match(
