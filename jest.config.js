@@ -11,7 +11,6 @@ module.exports = function () {
     testEnvironment: 'node',
     resetMocks: true,
     roots: ['<rootDir>/src'],
-    setupFiles: ['<rootDir>/tests/unit/setup.ts'],
     modulePaths: [compilerOptions.baseUrl],
     moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths),
     reporters: [['github-actions', { silent: false }], 'summary'],
