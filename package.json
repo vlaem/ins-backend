@@ -24,7 +24,7 @@
     "~logger": "./src/infrastructure/logging/logger.ts",
     "~config": "./src/infrastructure/config",
     "~dbmodels": "./src/infrastructure/db/models",
-    "~db": "./src/infrastructure/db",
+    "~c": "./src/infrastructure/db",
     "~": "./src"
   },
   "dependencies": {
@@ -50,6 +50,7 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
+    "@relmify/jest-fp-ts": "^2.1.1",
     "@tsconfig/node18": "^18.2.0",
     "@types/bcryptjs": "^2.4.2",
     "@types/jest": "^29.5.3",

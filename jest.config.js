@@ -12,8 +12,9 @@ module.exports = function () {
     resetMocks: true,
     roots: ['<rootDir>/src'],
     modulePaths: [compilerOptions.baseUrl],
+    setupFiles: ['<rootDir>/tests/unit/setup.ts'],
+    setupFilesAfterEnv: ['@relmify/jest-fp-ts'],
     moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths),
-    reporters: [['github-actions', { silent: false }], 'summary'],
   }
   return unitTestsConfig
 }
