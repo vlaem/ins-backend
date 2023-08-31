@@ -23,6 +23,7 @@ class FirebaseAdminAppSingleton {
     if (!FirebaseAdminAppSingleton.instance) {
       FirebaseAdminAppSingleton.instance = new FirebaseAdminAppSingleton()
     }
+
     return FirebaseAdminAppSingleton.instance
   }
   private _app: admin.app.App
