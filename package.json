@@ -24,7 +24,7 @@
     "~logger": "./src/infrastructure/logging/logger.ts",
     "~config": "./src/infrastructure/config",
     "~dbmodels": "./src/infrastructure/db/models",
-    "~c": "./src/infrastructure/db",
+    "~db": "./src/infrastructure/db",
     "~": "./src"
   },
   "dependencies": {
