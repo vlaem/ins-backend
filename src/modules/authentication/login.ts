@@ -54,7 +54,7 @@ export const loginWithFirebaseToken = (idToken: string) =>
     TE.flatMap((x) => pipe(x, (x) => x.email, findUserByEmail)),
     TE.flatMapTask(generateTokenGroupForUser),
     TE.tap(({ userRefreshToken }) =>
-      pipe(userRefreshToken, UserRefreshTokenRepo.save, TE.of)
+      pipe(userRefreshToken, UserRefreshTokenRepo.save, TE.fromTask)
     ),
     TE.map(({ userRefreshToken, accessTokenGroup }) =>
       pipe(

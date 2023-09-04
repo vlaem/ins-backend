@@ -5,7 +5,7 @@ import { getValidLogLevel } from './utils'
 
 const formatter = format.combine(
   format.timestamp({
-    format: 'YYYY-MM-DD HH:mm:ss',
+    format: 'YYYY-MM-DD HH:mm:ss.SSS',
   }),
   format.printf((info) => {
     const header = `[${info.level.toUpperCase()}]: ${info.timestamp} : ${
