@@ -87,9 +87,8 @@ export const refresh = (refreshTokenId: string) =>
     TE.bindW('accessTokenGroup', ({ user }) =>
       pipe(user, encodeAccessToken, TE.of)
     ),
-    TE.tap(({ previousRefreshToken, userRefreshToken, user }) =>
+    TE.tap(({ previousRefreshToken, userRefreshToken }) =>
       transaction([
-        UserRepo.save(user),
         UserRefreshTokenRepo.save(userRefreshToken),
         UserRefreshTokenRepo.destroy(previousRefreshToken),
       ])

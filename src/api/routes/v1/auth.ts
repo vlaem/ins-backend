@@ -73,7 +73,7 @@ AuthRoute.post('/refresh', (c) => {
     getCookie(c, 'refresh_token'),
     TE.fromNullable(UnauthorizedError.of()),
     TE.flatMap(refresh),
-    TE.tap((x) => pipe(x, setRefreshTokenCookie, TE.of)),
+    TE.tap((x) => pipe(x, setRefreshTokenCookie, TE.fromIO)),
     TE.map(transformPayload),
     TE.match(
       (e) => pipe({ message: e.code }, jsonResponse(e.status)),
