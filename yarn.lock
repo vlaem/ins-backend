@@ -3831,6 +3831,11 @@ hono@^3.3.4:
   resolved "https://registry.npmjs.org/hono/-/hono-3.3.4.tgz"
   integrity sha512-lqvcsQrXS0bSydj/MkOXi3opAwrlauIjZefhXMMRj9prABfBWdrYHSrWk/xfxgxNPs4yuEMh2Z5zV0L2b1Jmdw==
 
+hono@^4.12.34:
+  version "4.12.34"
+  resolved "https://registry.yarnpkg.com/hono/-/hono-4.12.34.tgz#9d6fb4ff01d6a8fa3a0290b4e120da19ea181b9b"
+  integrity sha512-GqXJqY/xJkJmuloTrnV1ZEXG3fqte+VjkUqoRNZXcrUidiUOP4fMSIHHY4tsqZBK++kVyWmt/AAfSUuy57/eSA==
+
 hosted-git-info@^2.1.4:
   version "2.8.9"
   resolved "https://registry.yarnpkg.com/hosted-git-info/-/hosted-git-info-2.8.9.tgz#dffc0bf9a21c02209090f2aa69429e1414daf3f9"
