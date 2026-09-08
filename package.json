@@ -36,7 +36,7 @@
     "firebase-admin": "^11.10.1",
     "fp-ts": "^2.16.1",
     "gulp-clean": "^0.4.0",
-    "hono": "^3.3.4",
+    "hono": "^4.13.5",
     "hono-swagger-jsdoc": "^0.0.6",
     "io-ts": "^2.2.20",
     "jsonwebtoken": "^9.0.1",
